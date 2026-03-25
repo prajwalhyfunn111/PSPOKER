@@ -146,11 +146,16 @@ body {
 /* POT */
 .pot-area {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    z-index: 5;
+    top: 8px;
+    right: 8px;
+    left: auto;
+    transform: none;
+    text-align: right;
+    z-index: 25;
+    background: rgba(10,20,14,0.9);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
 }
 
 .pot-label {
@@ -163,16 +168,13 @@ body {
 
 .pot-amount {
     font-family: 'Playfair Display', serif;
-    font-size: 22px;
+    font-size: 18px;
     color: var(--gold);
     font-weight: 700;
 }
 
 .pot-chips {
-    display: flex;
-    gap: 4px;
-    justify-content: center;
-    margin-top: 4px;
+    display: none;
 }
 
 .chip {
@@ -289,6 +291,12 @@ body {
     font-size: 13px;
     color: var(--text);
     font-weight: 500;
+}
+.clickable-stack {
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: rgba(201,168,76,0.6);
 }
 
 .player-bet {
@@ -506,15 +514,16 @@ body {
 .next-control {
     display: none;
     align-items: center;
+    justify-content: center;
 }
 
 .next-overlay {
     position: absolute;
-    left: 50%;
-    bottom: -22px;
-    transform: translateX(-50%);
+    right: 12px;
+    bottom: -18px;
     z-index: 40;
 }
+
 
 .action-buttons {
     display: flex;
@@ -539,6 +548,19 @@ body {
 .btn-action:disabled {
     opacity: 0.3;
     cursor: not-allowed;
+}
+
+.btn-next-inline {
+    padding: 4px 8px;
+    margin-left: 6px;
+    border-radius: 6px;
+    border: 1px solid var(--gold);
+    background: rgba(201,168,76,0.15);
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
 }
 
 .btn-fold {
@@ -849,6 +871,19 @@ body {
     z-index: 20;
 }
 
+.turn-arrow {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 10px solid var(--gold);
+    filter: drop-shadow(0 0 4px rgba(0,0,0,0.6));
+}
+
 /* WINNER OVERLAY */
 .winner-overlay {
     position: absolute;
@@ -999,7 +1034,7 @@ body {
     animation: potPulse 0.3s ease;
 }
 
-</style></head><body><div class="header"><div class="logo">PS <span>Poker</span></div><div class="header-stats"><span>Hands: <strong id="hdr-hands">0</strong></span><span>VPIP: <strong id="hdr-vpip">0%</strong></span><span>PFR: <strong id="hdr-pfr">0%</strong></span><span>W$SD: <strong id="hdr-wsd" >0%</strong></span> <span>Stack: <strong id="hdr-stack" >$1, 000</strong></span> </div> <button class="btn-analytics" onclick="switchTab('analytics')" >📊 Analytics</button> </div> <div class="game-container" > <div class="table-area" > <div class="table-wrap" > <div class="table" id="mainTable" > <div class="table-inner" ></div> <div class="phase-badge" id="phaseBadge" >Waiting</div> <div class="next-overlay"><div class="next-control" id="nextControl"><button class="btn-action btn-call" onclick="runNext()">Next</button></div></div> <!-- Community Cards --> <div class="community-cards" id="communityCards" > <div class="community-card-slot" id="cc0" ></div> <div class="community-card-slot" id="cc1" ></div> <div class="community-card-slot" id="cc2" ></div> <div class="community-card-slot" id="cc3" ></div> <div class="community-card-slot" id="cc4" ></div> </div> <!-- Pot --> <div class="pot-area" id="potArea" > <div class="pot-label" >Pot</div> <div class="pot-amount" id="potDisplay" >$0</div> <div class="pot-chips" id="potChips" ></div> </div> <!-- Players --> <div class="player-seat seat-0" id="seat0" ></div> <div class="player-seat seat-1" id="seat1" ></div> <div class="player-seat seat-2" id="seat2" ></div> <div class="player-seat seat-3" id="seat3" ></div> <!-- Winner overlay --> <div class="winner-overlay" id="winnerOverlay" > <div class="winner-box" > <div class="winner-title" id="winnerTitle" >🏆 You Win !</div> <div class="winner-hand" id="winnerHand" >Pair of Aces</div> <div class="winner-amount" id="winnerAmount" >+$320</div> </div> </div> </div> </div> <div class="msg-area" id="msgArea" ></div> <!-- Action Area --> <div class="action-area" id="actionArea" > <div class="hand-display" > <div class="hand-rank" id="handRankDisplay" >—</div> <div class="hand-desc" id="handDescDisplay" >Deal a hand to start</div> </div> <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end" > <div class="raise-section" > <span style="font-size:11px;color:var(--text-dim)" >Raise:</span> <input type="number" class="raise-input" id="raiseInput" value="40" min="20" step="10" > <div class="raise-preset" > <button class="btn-preset" onclick="setRaise('half')" >½P</button> <button class="btn-preset" onclick="setRaise('pot')" >Pot</button> <button class="btn-preset" onclick="setRaise('2x')" >2x</button> </div> </div> <div class="action-buttons" id="actionButtons" > <button class="btn-action btn-new-hand" onclick="newHand()" >Deal New Hand</button> </div> </div> <div class="hand-coach" id="handCoach"></div> </div> </div> <!-- SIDEBAR --> <div class="sidebar" > <div class="sidebar-tabs" > <button class="tab-btn active" onclick="switchTab('log')" id="tab-log" >Log</button> <button class="tab-btn" onclick="switchTab('analytics')" id="tab-analytics" >Stats</button> <button class="tab-btn" onclick="switchTab('hands')" id="tab-hands" >Hands</button> <button class="tab-btn" onclick="switchTab('leaders')" id="tab-leaders" >Leaders</button> </div> <div class="tab-content" id="tab-content-log" > <div id="logContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-analytics" > <div id="analyticsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-hands" > <div id="handsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-leaders" > <div id="leadersContainer" ></div> </div> </div> </div> <script> // ============================================================
+</style></head><body><div class="header"><div class="logo">PS <span>Poker</span></div><div class="header-stats"><span>Hands: <strong id="hdr-hands">0</strong></span><span>VPIP: <strong id="hdr-vpip">0%</strong></span><span>PFR: <strong id="hdr-pfr">0%</strong></span><span>W$SD: <strong id="hdr-wsd" >0%</strong></span> <span>Stack: <strong id="hdr-stack" >$1, 000</strong></span> </div> </div> <div class="game-container" > <div class="table-area" > <div class="table-wrap" > <div class="table" id="mainTable" > <div class="table-inner" ></div> <div class="phase-badge" id="phaseBadge" >Waiting</div> <div class="next-overlay"><div class="next-control" id="nextControl"><button class="btn-action btn-call" onclick="runNext()">Next</button></div></div> <!-- Community Cards --> <div class="community-cards" id="communityCards" > <div class="community-card-slot" id="cc0" ></div> <div class="community-card-slot" id="cc1" ></div> <div class="community-card-slot" id="cc2" ></div> <div class="community-card-slot" id="cc3" ></div> <div class="community-card-slot" id="cc4" ></div> </div> <!-- Pot --> <div class="pot-area" id="potArea" > <div class="pot-label" >Pot</div> <div class="pot-amount" id="potDisplay" >$0</div> <div class="pot-chips" id="potChips" ></div> </div> <!-- Players --> <div class="player-seat seat-0" id="seat0" ></div> <div class="player-seat seat-1" id="seat1" ></div> <div class="player-seat seat-2" id="seat2" ></div> <div class="player-seat seat-3" id="seat3" ></div> <!-- Winner overlay --> <div class="winner-overlay" id="winnerOverlay" > <div class="winner-box" > <div class="winner-title" id="winnerTitle" >🏆 You Win !</div> <div class="winner-hand" id="winnerHand" >Pair of Aces</div> <div class="winner-amount" id="winnerAmount" >+$320</div> </div> </div> </div> </div> <div class="msg-area" id="msgArea" ></div> <!-- Action Area --> <div class="action-area" id="actionArea" > <div class="hand-display" > <div class="hand-rank" id="handRankDisplay" >—</div> <div class="hand-desc" id="handDescDisplay" >Deal a hand to start</div> </div> <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end" > <div class="raise-section" > <span style="font-size:11px;color:var(--text-dim)" >Raise:</span> <input type="number" class="raise-input" id="raiseInput" value="40" min="20" step="10" > <div class="raise-preset" > <button class="btn-preset" onclick="setRaise('half')" >½P</button> <button class="btn-preset" onclick="setRaise('pot')" >Pot</button> <button class="btn-preset" onclick="setRaise('2x')" >2x</button> </div> </div> <div class="action-buttons" id="actionButtons" > <button class="btn-action btn-new-hand" onclick="newHand()" >Deal New Hand</button> </div> </div> <div class="hand-coach" id="handCoach"></div> </div> </div> <!-- SIDEBAR --> <div class="sidebar" > <div class="sidebar-tabs" > <button class="tab-btn active" onclick="switchTab('log')" id="tab-log" >Log</button> <button class="tab-btn" onclick="switchTab('analytics')" id="tab-analytics" >Stats</button> <button class="tab-btn" onclick="switchTab('hands')" id="tab-hands" >Hands</button> <button class="tab-btn" onclick="switchTab('leaders')" id="tab-leaders" >Leaders</button> </div> <div class="tab-content" id="tab-content-log" > <div id="logContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-analytics" > <div id="analyticsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-hands" > <div id="handsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-leaders" > <div id="leadersContainer" ></div> </div> </div> </div> <script> // ============================================================
     // CARD ENGINE
     // ============================================================
     const SUITS=['♠', '♥', '♦', '♣'];
@@ -1386,6 +1421,9 @@ let G= {
     leaderboard: {},
     pauseMode: true,
     nextFn: null,
+    nextLabel: 'Next',
+    balanceHistory: [],
+    lastRaise: 20,
     currentBets: [0,
     0,
     0,
@@ -1478,6 +1516,7 @@ function newHand() {
     const bb=(G.dealer+2)%4;
     const sbAmt=10,
     bbAmt=20;
+    G.lastRaise=bbAmt;
     G.players[sb].stack -=sbAmt;
     G.players[sb].bet=sbAmt;
     G.pot+=sbAmt;
@@ -1486,6 +1525,8 @@ function newHand() {
     G.pot+=bbAmt;
     G.currentBets[sb]=sbAmt;
     G.currentBets[bb]=bbAmt;
+    if (sb===0) addBalanceLog(-sbAmt, 'Posted SB');
+    if (bb===0) addBalanceLog(-bbAmt, 'Posted BB');
 
     // Deal
     for (let i=0; i<2; i++) for (const p of G.players) p.hole.push(G.deck.pop());
@@ -1526,7 +1567,8 @@ function newHand() {
 
     if (G.currentPlayer !==0) {
         showMsg('');
-        if (G.pauseMode) enqueueNext(runAITurns, `Next: ${G.players[G.currentPlayer].name} acts`);
+        const lbl=`Next: ${nextActorName()} acts`;
+        if (G.pauseMode) enqueueNext(runAITurns, lbl);
         else setTimeout(runAITurns, 1200);
     }
 
@@ -1542,6 +1584,7 @@ function newHand() {
 function doAction(action, amount) {
     const hero=G.players[0];
     const toCall=G.toCall - G.currentBets[0];
+    const minRaise=Math.max(G.lastRaise, 20);
 
     if (action==='fold') {
         hero.folded=true;
@@ -1550,6 +1593,10 @@ function doAction(action, amount) {
     }
 
     else if (action==='check') {
+        if (toCall>0) {
+            showMsg(`Cannot check — $${toCall} to call`);
+            return;
+        }
         hero.lastAction='check';
         addLog(`You check`, 'check');
     }
@@ -1562,9 +1609,7 @@ function doAction(action, amount) {
         G.pot+=amt;
         hero.lastAction='call';
 
-        addLog(`You call $${
-                amt
-            }
+        addLog(`You call $${amt}
 
             `, 'call');
         G.stats.vpipHands+=(G.phase==='preflop' ?1:0);
@@ -1572,13 +1617,24 @@ function doAction(action, amount) {
     }
 
     else if (action==='raise') {
-        const total=Math.min(amount, hero.stack + G.currentBets[0]);
+        const cap=hero.stack + G.currentBets[0];
+        if (cap < G.toCall) {
+            showMsg('Not enough chips to call'); return;
+        }
+        const required=G.toCall + minRaise;
+        if (amount < required && amount < cap) {
+            showMsg(`Min raise to $${required}`);
+            return;
+        }
+        const total=Math.min(amount, cap);
         const added=total - G.currentBets[0];
         hero.stack -=added;
         hero.bet+=added;
         G.pot+=added;
         G.currentBets[0]=total;
+        const prevToCall=G.toCall;
         G.toCall=total;
+        if (total>prevToCall) G.lastRaise=total - prevToCall;
         hero.lastAction='raise';
 
         addLog(`You raise to $${
@@ -1604,7 +1660,10 @@ function doAction(action, amount) {
         hero.bet+=amt;
         hero.stack=0;
         hero.allIn=true;
-        if (G.currentBets[0] > G.toCall) G.toCall=G.currentBets[0];
+        if (G.currentBets[0] > G.toCall) {
+            G.lastRaise=Math.max(G.lastRaise, G.currentBets[0]-G.toCall);
+            G.toCall=G.currentBets[0];
+        }
         hero.lastAction='allin';
 
         addLog(`You go ALL-IN $${
@@ -1628,7 +1687,8 @@ function doAction(action, amount) {
         }
     }
 
-    if (G.pauseMode) enqueueNext(runAITurns, `Next: ${G.players[G.currentPlayer].name} acts`);
+    const lbl=`Next: ${nextActorName()} acts`;
+    if (G.pauseMode) enqueueNext(runAITurns, lbl);
     else setTimeout(()=>runAITurns(), 1200);
 }
 
@@ -1678,7 +1738,7 @@ function runAITurns() {
 
         setTimeout(()=> {
                 const toCall=G.toCall - G.currentBets[G.currentPlayer];
-                const minRaise=G.toCall * 2;
+                const minRaise=Math.max(G.lastRaise, 20);
 
                 const result=aiDecide(p, {
                     pot:G.pot, board:G.board, phase:G.phase
@@ -1697,6 +1757,9 @@ function runAITurns() {
             }
 
             else if (result.action==='check') {
+                if (toCall>0) {
+                    result.action='call';
+                } else {
                 p.lastAction='check';
 
                 addLog(`${
@@ -1704,6 +1767,7 @@ function runAITurns() {
                     }
 
                     checks`, 'check');
+                }
             }
 
             else if (result.action==='call') {
@@ -1715,29 +1779,42 @@ function runAITurns() {
                         p.name
                     }
 
-                    calls $${
+                    calls $${ 
                         amt
                     }
 
                     `, 'call');
+                if (p.isHero && amt>0) addBalanceLog(-amt, `Call ${G.phase}`);
             }
 
             else if (result.action==='raise') {
-                const total=Math.min(result.amount, p.stack + G.currentBets[G.currentPlayer]);
-                const added=total - G.currentBets[G.currentPlayer];
-                p.stack -=added; p.bet +=added; G.pot +=added; G.currentBets[G.currentPlayer]=total;
-                G.toCall=total;
-                p.lastAction='raise';
+                const cap=p.stack + G.currentBets[G.currentPlayer];
+                let target=Math.max(result.amount, G.toCall + minRaise);
+                if (cap <= G.toCall) {
+                    // treat as call
+                    const amt=Math.min(toCall, p.stack);
+                    p.stack -=amt; p.bet +=amt; G.pot +=amt; G.currentBets[G.currentPlayer] +=amt;
+                    p.lastAction='call';
+                    addLog(`${p.name}
 
-                addLog(`${
-                        p.name
-                    }
+                    calls $${amt}
 
-                    raises to $${
-                        total
-                    }
+                    `, 'call');
+                } else {
+                    const total=Math.min(target, cap);
+                    const added=total - G.currentBets[G.currentPlayer];
+                    p.stack -=added; p.bet +=added; G.pot +=added; G.currentBets[G.currentPlayer]=total;
+                    const prevToCall=G.toCall;
+                    G.toCall=total;
+                    if (total>prevToCall) G.lastRaise=total - prevToCall;
+                    p.lastAction='raise';
+
+                    addLog(`${p.name}
+
+                    raises to $${total}
 
                     `, 'raise');
+                }
             }
 
             const active=G.players.filter(x=> !x.folded);
@@ -1754,7 +1831,7 @@ function runAITurns() {
                 if (G.pauseMode) enqueueNext(advancePhase, 'Next: Next street'); else setTimeout(advancePhase, 900); return;
             }
 
-            const nextName=G.players[G.currentPlayer]?.name || 'Opponent';
+            const nextName=nextActorName();
             if (G.pauseMode) enqueueNext(next, `Next: ${nextName} acts`); else setTimeout(next, 900);
         }
 
@@ -1790,6 +1867,7 @@ function advancePhase() {
     // Reset bets for new street
     for(let i=0; i<4; i++) G.currentBets[i]=0;
     G.toCall=0;
+    G.lastRaise=20;
 
     for (const p of G.players) {
         p.bet=0;
@@ -1841,7 +1919,7 @@ function advancePhase() {
     updateHandRankDisplay();
 
     if (G.currentPlayer !==0) {
-        const nextName=G.players[G.currentPlayer]?.name || 'Opponent';
+        const nextName=nextActorName();
         if (G.pauseMode) enqueueNext(runAITurns, `Next: ${nextName} acts`);
         else setTimeout(runAITurns, 1000);
     }
@@ -1902,6 +1980,7 @@ function endHand(winner, showdown=false) {
     G.leaderboard[winner.name]=(G.leaderboard[winner.name]||0)+1;
 
     if (winner.isHero) {
+        addBalanceLog(won, 'Won pot');
         G.stats.wonWithoutShowdown+=showdown?0: 1;
         if (showdown) G.stats.wonAtShowdown++;
         G.stats.totalWon+=won;
@@ -2015,11 +2094,13 @@ function renderPlayers() {
             actionTagHTML
         }
 
+        ${isActive && G.phase!=='idle' && !p.folded ? '<div class="turn-arrow"></div>': ''}
+
         <div class="player-name ${p.isHero?'hero':''}">${
             p.name
-        }
+        }${p.isHero ? `<button class="btn-next-inline" id="nextInlineBtn" onclick="runNext()" style="display:${(G.pauseMode&&G.nextFn)?'inline-flex':'none'}">${G.nextLabel||'Next'}</button>`:''}
 
-        </div><div class="player-stack">$${
+        </div><div class="player-stack ${p.isHero?'clickable-stack':''}" ${p.isHero?'onclick="showBalanceHistory()"':''}>$${
             p.stack
         }
 
@@ -2081,14 +2162,24 @@ function renderPot() {
 function renderActions() {
     const hero=G.players[0];
     if ( !hero || G.phase==='idle' || G.currentPlayer !==0) return;
-    const toCall=G.toCall - G.currentBets[0];
+    const btns=document.getElementById('actionButtons');
+
+    if (hero.folded || hero.allIn) {
+        if (btns) btns.innerHTML='';
+        const ri=document.getElementById('raiseInput');
+        if (ri) ri.disabled=true;
+        return;
+    }
+    const ri=document.getElementById('raiseInput');
+    if (ri) ri.disabled=false;
+    const toCall=Math.max(0, G.toCall - G.currentBets[0]);
     const canCheck=toCall <=0;
-    const minRaise=Math.max(G.toCall*2, 20);
+    const minRaiseAmount=Math.max(G.lastRaise, 20);
+    const requiredTotal=G.toCall + minRaiseAmount;
+    const minRaise=requiredTotal;
 
     document.getElementById('raiseInput').value=minRaise;
     document.getElementById('raiseInput').min=minRaise;
-
-    const btns=document.getElementById('actionButtons');
 
     btns.innerHTML=` <button class="btn-action btn-fold" onclick="doAction('fold')">Fold</button>${
         canCheck ? `<button class="btn-action btn-check" onclick="doAction('check')">Check</button>` : `<button class="btn-action btn-call" onclick="doAction('call')"${
@@ -2218,6 +2309,43 @@ function renderHandCoach(ev, desc) {
 }
 
 // ============================================================
+// BALANCE HISTORY (HERO)
+// ============================================================
+function addBalanceLog(delta, reason) {
+    G.balanceHistory.unshift({
+        hand: G.handNum || 0,
+        phase: G.phase,
+        delta,
+        reason,
+        t: Date.now()
+    });
+    if (G.balanceHistory.length>50) G.balanceHistory.pop();
+}
+
+function showBalanceHistory() {
+    const hero=G.players[0];
+    if (!hero) return;
+    const container=document.getElementById('msgArea');
+    const entries=G.balanceHistory;
+    if (!entries.length) {
+        container.innerHTML='Balance history: no transactions yet.';
+        return;
+    }
+    container.innerHTML = `
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text)">
+            <div style="color:var(--gold);margin-bottom:4px">Balance history (latest first)</div>
+            ${entries.map(e=>`
+                <div style="display:flex;justify-content:space-between;gap:8px">
+                    <span>Hand #${e.hand} ${e.phase}</span>
+                    <span style="color:${e.delta>=0?'#4caf50':'#e74c3c'}">${e.delta>=0?'+':'-'}$${Math.abs(e.delta)}</span>
+                    <span style="color:var(--text-dim)">${e.reason}</span>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+// ============================================================
 // LEADERBOARD
 // ============================================================
 function updateLeaderboardDisplay() {
@@ -2239,13 +2367,34 @@ function updateLeaderboardDisplay() {
 // ============================================================
 // NEXT / STEP MODE
 // ============================================================
+function nextActorName() {
+    if (G.currentPlayer<0) return 'Opponent';
+    let idx=G.currentPlayer;
+    for (let i=0;i<4;i++) {
+        const p=G.players[idx];
+        if (p && !p.folded && !p.allIn) return p.name;
+        idx=(idx+1)%4;
+    }
+    return 'Opponent';
+}
+
 function enqueueNext(fn, label='Next') {
     G.nextFn=fn;
+    G.nextLabel=label;
     const wrap=document.getElementById('nextControl');
     if (wrap) {
         wrap.style.display='flex';
         const btn=wrap.querySelector('button');
-        if (btn) btn.textContent=label;
+        if (btn) {
+            btn.textContent=label;
+            btn.setAttribute('aria-label', label);
+            btn.disabled=false;
+        }
+    }
+    const inline=document.getElementById('nextInlineBtn');
+    if (inline) {
+        inline.style.display='inline-flex';
+        inline.textContent=label;
     }
     showMsg('Press Next to continue');
 }
@@ -2253,9 +2402,12 @@ function enqueueNext(fn, label='Next') {
 function runNext() {
     const wrap=document.getElementById('nextControl');
     if (wrap) wrap.style.display='none';
+    const inline=document.getElementById('nextInlineBtn');
+    if (inline) inline.style.display='none';
     if (G.nextFn) {
         const fn=G.nextFn;
         G.nextFn=null;
+        G.nextLabel='Next';
         fn();
     }
 }

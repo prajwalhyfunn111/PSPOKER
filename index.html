@@ -1612,6 +1612,7 @@ function doAction(action, amount) {
         G.currentBets[0]+=amt;
         addContribution(0, amt);
         hero.lastAction='call';
+        recomputeToCall();
 
         addLog(`You call $${amt}
 
@@ -1649,6 +1650,8 @@ function doAction(action, amount) {
             G.currentBets[0]=cap;
             hero.allIn=true;
             hero.lastAction='allin';
+            G.toCall=Math.max(G.toCall, cap);
+            recomputeToCall();
             G.currentPlayer=(0+1)%4;
             renderAll();
             updateHandRankDisplay();
@@ -1671,6 +1674,7 @@ function doAction(action, amount) {
         G.toCall=total;
         if (total>prevToCall && (total - prevToCall)>=G.lastRaise) G.lastRaise=total - prevToCall;
         hero.lastAction='raise';
+        recomputeToCall();
 
         addLog(`You raise to $${
                 total
@@ -1699,6 +1703,7 @@ function doAction(action, amount) {
             G.lastRaise=Math.max(G.lastRaise, G.currentBets[0]-G.toCall);
             G.toCall=G.currentBets[0];
         }
+        recomputeToCall();
         hero.lastAction='allin';
 
         addLog(`You go ALL-IN $${
@@ -1809,6 +1814,7 @@ function runAITurns() {
                 const amt=Math.min(toCall, p.stack);
                 p.stack -=amt; p.bet +=amt; addContribution(G.currentPlayer, amt); G.currentBets[G.currentPlayer] +=amt;
                 p.lastAction='call';
+                recomputeToCall();
 
                 addLog(`${
                         p.name
@@ -1831,6 +1837,7 @@ function runAITurns() {
                     const amt=Math.min(toCall, p.stack);
                     p.stack -=amt; p.bet +=amt; addContribution(G.currentPlayer, amt); G.currentBets[G.currentPlayer] +=amt;
                     p.lastAction='call';
+                    recomputeToCall();
                     addLog(`${p.name}
 
                     calls $${amt}
@@ -1844,6 +1851,7 @@ function runAITurns() {
                     p.allIn=true;
                     p.lastAction='allin';
                     G.toCall=Math.max(G.toCall, total); // others must still match this amount
+                    recomputeToCall();
 
                     addLog(`${p.name}
 
@@ -1861,6 +1869,7 @@ function runAITurns() {
                     if (total>prevToCall && (total - prevToCall)>=G.lastRaise) G.lastRaise=total - prevToCall;
                     if (total===cap) p.allIn=true;
                     p.lastAction=p.allIn?'allin':'raise';
+                    recomputeToCall();
 
                     addLog(`${p.name}
 
@@ -2342,6 +2351,11 @@ function addBalanceLog(delta, reason) {
 function addContribution(idx, amt) {
     G.pot+=amt;
     G.totalInvested[idx]+=amt;
+}
+
+function recomputeToCall() {
+    const activeIdx=G.players.map((p,i)=>(!p.folded ? i : -1)).filter(i=>i>=0);
+    G.toCall=activeIdx.length ? Math.max(...activeIdx.map(i=>G.currentBets[i])) : 0;
 }
 
 // Side-pot aware distribution

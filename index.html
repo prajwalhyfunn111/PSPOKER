@@ -1488,6 +1488,8 @@ name: 'Rachit', stack:1000, hole:[], bet:0, folded:false, isHero:false, profileI
 // NEW HAND
 // ============================================================
 function newHand() {
+    if (G.phase!=='idle') return; // prevent double start clicks
+    setDealButton('Dealing...', true);
     if (G.players.length===0) initPlayers();
 
     // Reset players who bust
@@ -2037,7 +2039,7 @@ function endHand(winner, showdown=false) {
     updateLeaderboardDisplay();
     // hand history disabled in this mode
 
-    document.getElementById('actionButtons').innerHTML=`<button class="btn-action btn-new-hand" onclick="newHand()">Deal Next Hand</button>`;
+    updateDealButtonAfterHand();
 }
 
 // ============================================================
@@ -2752,6 +2754,60 @@ function renderHandHistory(winner, pot, showdown) {
 }
 
 // ============================================================
+// SESSION / BUTTON HELPERS
+// ============================================================
+function setDealButton(label='Deal Next Hand', disabled=false) {
+    const btns=document.getElementById('actionButtons');
+    if (btns) btns.innerHTML=`<button class="btn-action btn-new-hand" onclick="newHand()" ${disabled?'disabled':''}>${label}</button>`;
+}
+
+function updateDealButtonAfterHand() {
+    if (G.handNum>=5) {
+        resetTableScores();
+        setDealButton('Deal First Hand');
+        showMsg('5-hand set complete — stacks reset to $1000. Deal First Hand to start again.');
+        return;
+    }
+    const nextRound=G.handNum+1;
+    setDealButton(`Start Round ${nextRound} (of 5)`);
+    showMsg(`Round ${G.handNum} complete. Click to start round ${nextRound}.`);
+}
+
+function resetTableScores() {
+    // Reset stacks and bets after a 5-hand block
+    for (const p of G.players) {
+        p.stack=1000;
+        p.bet=0;
+        p.hole=[];
+        p.folded=false;
+        p.allIn=false;
+        p.lastAction=null;
+    }
+    // Reset leaderboard counts
+    for (const name of Object.keys(G.leaderboard||{})) G.leaderboard[name]=0;
+    G.pot=0;
+    G.board=[];
+    G.totalInvested=[0,0,0,0];
+    G.currentBets=[0,0,0,0];
+    G.phase='idle';
+    G.toCall=0;
+    G.lastRaise=20;
+    G.currentPlayer=-1;
+    G.deck=[];
+    G.handNum=0;
+    G.nextFn=null;
+    G.nextLabel='Next';
+    const wrap=document.getElementById('nextControl');
+    if (wrap) wrap.style.display='none';
+    const inline=document.getElementById('nextInlineBtn');
+    if (inline) inline.style.display='none';
+    addLog('Session reset: stacks set to $1000 after 5 hands', 'system');
+    renderAll();
+    updateLeaderboardDisplay();
+    updateHeaderStats();
+}
+
+// ============================================================
 // UI HELPERS
 // ============================================================
 function showWinner(title, hand, amount, isHero=true) {
@@ -2807,7 +2863,7 @@ renderAll();
 updateHandRankDisplay();
 updateAnalyticsPanel();
 updateLeaderboardDisplay();
-document.getElementById('actionButtons').innerHTML=`<button class="btn-action btn-new-hand" onclick="newHand()">Deal First Hand</button>`;
+setDealButton('Deal First Hand');
 addLog('Welcome to PS Poker — Professional Mode', 'system');
 addLog('$10/$20 No Limit Texas Hold\'em', 'system');
 </script></body></html>

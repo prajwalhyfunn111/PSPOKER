@@ -2328,7 +2328,7 @@ function renderPlayers() {
 
         <div class="player-name ${p.isHero?'hero':''}">${
             p.name
-        }${p.isHero ? `<button class="btn-next-inline" id="nextInlineBtn" onclick="runNext()" style="display:${(G.pauseMode&&G.nextFn)?'inline-flex':'none'}">${G.nextLabel||'Next'}</button>`:''}
+        }
 
         </div><div class="player-stack ${p.isHero?'clickable-stack':''}" ${p.isHero?'onclick="showBalanceHistory()"':''}>$${
             p.stack

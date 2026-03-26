@@ -1801,7 +1801,7 @@ function doAction(action, amount) {
         hero.lastAction='call';
         recomputeToCall();
 
-        addLog(`You call $${amt}
+        addLog(`You call $${amt} (to $${G.currentBets[0]})
 
             `, 'call');
         G.stats.vpipHands+=(G.phase==='preflop' ?1:0);
@@ -1935,6 +1935,17 @@ function runAITurns() {
         }
 
         if (G.currentPlayer===0) {
+            const hero=G.players[0];
+            if (hero.folded || hero.allIn) {
+                // Skip hero if he cannot act
+                G.currentPlayer=nextPlayable(1);
+                if (G.currentPlayer===0) { // no playable opponents
+                    advancePhase();
+                    return;
+                }
+                next();
+                return;
+            }
             renderActions();
 
             showMsg(`Your turn — ${
@@ -2014,13 +2025,9 @@ function runAITurns() {
                 p.lastAction='call';
                 recomputeToCall();
 
-                addLog(`${
-                        p.name
-                    }
+                addLog(`${p.name}
 
-                    calls $${ 
-                        amt
-                    }
+                    calls $${amt} (to $${G.currentBets[G.currentPlayer]})
 
                     `, 'call');
                 if (p.isHero && amt>0) addBalanceLog(-amt, `Call ${G.phase}`);
@@ -2172,8 +2179,7 @@ function advancePhase() {
         return;
     }
 
-    G.currentPlayer=(G.dealer+1)%4;
-    while (G.players[G.currentPlayer].folded) G.currentPlayer=(G.currentPlayer+1)%4;
+    G.currentPlayer=nextPlayable((G.dealer+1)%4);
 
     renderAll();
     updateHandRankDisplay();
@@ -2683,6 +2689,16 @@ function nextActorName() {
         idx=(idx+1)%4;
     }
     return 'Opponent';
+}
+
+function nextPlayable(startIdx) {
+    let idx=startIdx;
+    for (let i=0;i<4;i++) {
+        const p=G.players[idx];
+        if (p && !p.folded && !p.allIn) return idx;
+        idx=(idx+1)%4;
+    }
+    return startIdx; // fallback
 }
 
 function enqueueNext(fn, label='Next') {

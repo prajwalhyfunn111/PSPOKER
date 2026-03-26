@@ -1845,6 +1845,11 @@ function newHand() {
 // ============================================================
 function doAction(action, amount) {
     const hero=G.players[0];
+    if (hero.folded || hero.allIn) {
+        showMsg('You are out this hand. Press Next to continue.');
+        renderActions();
+        return;
+    }
     const toCall=G.toCall - G.currentBets[0];
     const minRaise=Math.max(G.lastRaise, 20);
 
@@ -1852,6 +1857,7 @@ function doAction(action, amount) {
         hero.folded=true;
         hero.lastAction='fold';
         addLog(`You fold`, 'fold');
+        renderActions(); // clear buttons immediately
     }
 
     else if (action==='check') {

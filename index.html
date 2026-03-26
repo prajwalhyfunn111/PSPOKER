@@ -1115,6 +1115,7 @@ body {
 
     .table-wrap {
         min-height: 280px;
+        margin-bottom: 14px;
     }
 
     .table {
@@ -1150,7 +1151,7 @@ body {
         position: static; /* keep in flow so it never covers the table */
         bottom: auto;
         z-index: 10;
-        margin-top: 6px;
+        margin-top: 10px;
         padding: 8px 10px;
         gap: 6px;
         flex-direction: column;
@@ -2343,6 +2344,7 @@ function renderAll() {
     renderPlayers();
     renderBoard();
     renderPot();
+    updateNameButton();
     // If only one active player, resolve immediately
     const active=G.players.filter(p=> !p.folded);
     if (G.phase!=='idle' && active.length===1) {
@@ -2785,6 +2787,7 @@ function nextPlayable(startIdx) {
 function openNameModal() {
     const m=document.getElementById('nameModal');
     if (!m) return;
+    if (G.phase!=='idle') { showMsg('Change names between hands only.'); return; }
     document.getElementById('nameHero').value=G.players[0]?.name||'Hero';
     document.getElementById('nameP2').value=G.players[1]?.name||'Player 2';
     document.getElementById('nameP3').value=G.players[2]?.name||'Player 3';
@@ -2798,6 +2801,7 @@ function closeNameModal() {
 }
 
 function saveNames() {
+    if (G.phase!=='idle') { showMsg('Change names between hands only.'); return; }
     const oldNames=G.players.map(p=>p.name);
     const oldBoard=G.leaderboard||{};
     const names=[
@@ -3106,6 +3110,15 @@ function renderHandHistory(winner, pot, showdown) {
 // ============================================================
 // SESSION / BUTTON HELPERS
 // ============================================================
+function updateNameButton() {
+    const btn=document.querySelector('.btn-analytics');
+    if (!btn) return;
+    const disabled=G.phase!=='idle';
+    btn.disabled=disabled;
+    btn.style.opacity=disabled?0.5:1;
+    btn.style.pointerEvents=disabled?'none':'auto';
+}
+
 function setDealButton(label='Deal Next Hand', disabled=false) {
     const btns=document.getElementById('actionButtons');
     if (btns) btns.innerHTML=`<button class="btn-action btn-new-hand" onclick="newHand()" ${disabled?'disabled':''}>${label}</button>`;

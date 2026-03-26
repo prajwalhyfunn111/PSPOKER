@@ -92,6 +92,70 @@ body {
     border-color: var(--gold);
 }
 
+/* NAME MODAL */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+}
+
+.modal {
+    background: #0f1c14;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    width: 320px;
+    box-shadow: var(--shadow);
+    z-index: 301;
+}
+
+.modal h3 {
+    margin-bottom: 10px;
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-size: 18px;
+}
+
+.modal label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 6px 0;
+    color: var(--text);
+    font-size: 12px;
+}
+
+.modal input {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 8px;
+    border-radius: 5px;
+    width: 180px;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+}
+
 /* MAIN LAYOUT */
 .game-container {
     display: grid;
@@ -1210,7 +1274,23 @@ body {
     .next-overlay { top: 60px; right: 10px; bottom: auto; }
 }
 
-</style></head><body><div class="header"><div class="logo">PS <span>Poker</span></div><div class="header-stats"><span>Hands: <strong id="hdr-hands">0</strong></span><span>VPIP: <strong id="hdr-vpip">0%</strong></span><span>PFR: <strong id="hdr-pfr">0%</strong></span><span>W$SD: <strong id="hdr-wsd" >0%</strong></span> <span>Stack: <strong id="hdr-stack" >$1, 000</strong></span> </div> </div> <div class="game-container" > <div class="table-area" > <div class="table-wrap" > <div class="table" id="mainTable" > <div class="table-inner" ></div> <div class="phase-badge" id="phaseBadge" >Waiting</div> <div class="next-overlay"><div class="next-control" id="nextControl"><button class="btn-action btn-call" onclick="runNext()">Next</button></div></div> <!-- Community Cards --> <div class="community-cards" id="communityCards" > <div class="community-card-slot" id="cc0" ></div> <div class="community-card-slot" id="cc1" ></div> <div class="community-card-slot" id="cc2" ></div> <div class="community-card-slot" id="cc3" ></div> <div class="community-card-slot" id="cc4" ></div> </div> <!-- Pot --> <div class="pot-area" id="potArea" > <div class="pot-label" >Pot</div> <div class="pot-amount" id="potDisplay" >$0</div> <div class="pot-chips" id="potChips" ></div> </div> <!-- Players --> <div class="player-seat seat-0" id="seat0" ></div> <div class="player-seat seat-1" id="seat1" ></div> <div class="player-seat seat-2" id="seat2" ></div> <div class="player-seat seat-3" id="seat3" ></div> <!-- Winner overlay --> <div class="winner-overlay" id="winnerOverlay" > <div class="winner-box" > <div class="winner-title" id="winnerTitle" >🏆 You Win !</div> <div class="winner-hand" id="winnerHand" >Pair of Aces</div> <div class="winner-amount" id="winnerAmount" >+$320</div> </div> </div> </div> </div> <div class="msg-area" id="msgArea" ></div> <!-- Action Area --> <div class="action-area" id="actionArea" > <div class="hand-display" > <div class="hand-rank" id="handRankDisplay" >—</div> <div class="hand-desc" id="handDescDisplay" >Deal a hand to start</div> </div> <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end" > <div class="raise-section" > <span style="font-size:11px;color:var(--text-dim)" >Raise:</span> <input type="number" class="raise-input" id="raiseInput" value="40" min="20" step="10" > <div class="raise-preset" > <button class="btn-preset" onclick="setRaise('half')" >½P</button> <button class="btn-preset" onclick="setRaise('pot')" >Pot</button> <button class="btn-preset" onclick="setRaise('2x')" >2x</button> </div> </div> <div class="action-buttons" id="actionButtons" > <button class="btn-action btn-new-hand" onclick="newHand()" >Deal New Hand</button> </div> </div> <div class="hand-coach" id="handCoach"></div> </div> </div> <!-- SIDEBAR --> <div class="sidebar" > <div class="sidebar-tabs" > <button class="tab-btn active" onclick="switchTab('log')" id="tab-log" >Log</button> <button class="tab-btn" onclick="switchTab('analytics')" id="tab-analytics" >Stats</button> <button class="tab-btn" onclick="switchTab('hands')" id="tab-hands" >Hands</button> <button class="tab-btn" onclick="switchTab('leaders')" id="tab-leaders" >Leaders</button> </div> <div class="tab-content" id="tab-content-log" > <div id="logContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-analytics" > <div id="analyticsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-hands" > <div id="handsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-leaders" > <div id="leadersContainer" ></div> </div> </div> </div> <script> // ============================================================
+</style></head><body><div class="header"><div class="logo">PS <span>Poker</span></div><div class="header-stats"><span>Hands: <strong id="hdr-hands">0</strong></span><span>VPIP: <strong id="hdr-vpip">0%</strong></span><span>PFR: <strong id="hdr-pfr">0%</strong></span><span>W$SD: <strong id="hdr-wsd" >0%</strong></span> <span>Stack: <strong id="hdr-stack" >$1, 000</strong></span> </div><button class="btn-analytics" onclick="openNameModal()">Set Player Names</button> </div>
+
+<div class="modal-backdrop" id="nameModal">
+  <div class="modal">
+    <h3>Player Names</h3>
+    <label>Seat 1 (You)<input id="nameHero" type="text" value="Prajwal"></label>
+    <label>Seat 2<input id="nameP2" type="text" value="Gaurav"></label>
+    <label>Seat 3<input id="nameP3" type="text" value="Saksham"></label>
+    <label>Seat 4<input id="nameP4" type="text" value="Rachit"></label>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeNameModal()">Cancel</button>
+      <button class="btn-analytics" onclick="saveNames()">Save</button>
+    </div>
+  </div>
+</div>
+
+ <div class="game-container" > <div class="table-area" > <div class="table-wrap" > <div class="table" id="mainTable" > <div class="table-inner" ></div> <div class="phase-badge" id="phaseBadge" >Waiting</div> <div class="next-overlay"><div class="next-control" id="nextControl"><button class="btn-action btn-call" onclick="runNext()">Next</button></div></div> <!-- Community Cards --> <div class="community-cards" id="communityCards" > <div class="community-card-slot" id="cc0" ></div> <div class="community-card-slot" id="cc1" ></div> <div class="community-card-slot" id="cc2" ></div> <div class="community-card-slot" id="cc3" ></div> <div class="community-card-slot" id="cc4" ></div> </div> <!-- Pot --> <div class="pot-area" id="potArea" > <div class="pot-label" >Pot</div> <div class="pot-amount" id="potDisplay" >$0</div> <div class="pot-chips" id="potChips" ></div> </div> <!-- Players --> <div class="player-seat seat-0" id="seat0" ></div> <div class="player-seat seat-1" id="seat1" ></div> <div class="player-seat seat-2" id="seat2" ></div> <div class="player-seat seat-3" id="seat3" ></div> <!-- Winner overlay --> <div class="winner-overlay" id="winnerOverlay" > <div class="winner-box" > <div class="winner-title" id="winnerTitle" >🏆 You Win !</div> <div class="winner-hand" id="winnerHand" >Pair of Aces</div> <div class="winner-amount" id="winnerAmount" >+$320</div> </div> </div> </div> </div> <div class="msg-area" id="msgArea" ></div> <!-- Action Area --> <div class="action-area" id="actionArea" > <div class="hand-display" > <div class="hand-rank" id="handRankDisplay" >—</div> <div class="hand-desc" id="handDescDisplay" >Deal a hand to start</div> </div> <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end" > <div class="raise-section" > <span style="font-size:11px;color:var(--text-dim)" >Raise:</span> <input type="number" class="raise-input" id="raiseInput" value="40" min="20" step="10" > <div class="raise-preset" > <button class="btn-preset" onclick="setRaise('half')" >½P</button> <button class="btn-preset" onclick="setRaise('pot')" >Pot</button> <button class="btn-preset" onclick="setRaise('2x')" >2x</button> </div> </div> <div class="action-buttons" id="actionButtons" > <button class="btn-action btn-new-hand" onclick="newHand()" >Deal New Hand</button> </div> </div> <div class="hand-coach" id="handCoach"></div> </div> </div> <!-- SIDEBAR --> <div class="sidebar" > <div class="sidebar-tabs" > <button class="tab-btn active" onclick="switchTab('log')" id="tab-log" >Log</button> <button class="tab-btn" onclick="switchTab('analytics')" id="tab-analytics" >Stats</button> <button class="tab-btn" onclick="switchTab('hands')" id="tab-hands" >Hands</button> <button class="tab-btn" onclick="switchTab('leaders')" id="tab-leaders" >Leaders</button> </div> <div class="tab-content" id="tab-content-log" > <div id="logContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-analytics" > <div id="analyticsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-hands" > <div id="handsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-leaders" > <div id="leadersContainer" ></div> </div> </div> </div> <script> // ============================================================
     // CARD ENGINE
     // ============================================================
     const SUITS=['♠', '♥', '♦', '♣'];
@@ -1610,6 +1690,7 @@ let G= {
     handNum: 0,
     handHistory: [],
     log: [],
+    namesSet: false,
     // Analytics
     stats: {
         handsPlayed: 0,
@@ -2701,6 +2782,43 @@ function nextPlayable(startIdx) {
     return startIdx; // fallback
 }
 
+function openNameModal() {
+    const m=document.getElementById('nameModal');
+    if (!m) return;
+    document.getElementById('nameHero').value=G.players[0]?.name||'Hero';
+    document.getElementById('nameP2').value=G.players[1]?.name||'Player 2';
+    document.getElementById('nameP3').value=G.players[2]?.name||'Player 3';
+    document.getElementById('nameP4').value=G.players[3]?.name||'Player 4';
+    m.style.display='flex';
+}
+
+function closeNameModal() {
+    const m=document.getElementById('nameModal');
+    if (m) m.style.display='none';
+}
+
+function saveNames() {
+    const oldNames=G.players.map(p=>p.name);
+    const oldBoard=G.leaderboard||{};
+    const names=[
+        document.getElementById('nameHero').value.trim()||'Hero',
+        document.getElementById('nameP2').value.trim()||'Player 2',
+        document.getElementById('nameP3').value.trim()||'Player 3',
+        document.getElementById('nameP4').value.trim()||'Player 4',
+    ];
+    const newBoard={};
+    for (let i=0;i<G.players.length;i++) {
+        G.players[i].name=names[i];
+        newBoard[names[i]]=oldBoard[oldNames[i]]||0;
+    }
+    G.leaderboard=newBoard;
+    G.namesSet=true;
+    addLog('Player names updated', 'system');
+    closeNameModal();
+    renderAll();
+    updateLeaderboardDisplay();
+}
+
 function enqueueNext(fn, label='Next') {
     G.nextFn=fn;
     G.nextLabel=label;
@@ -3098,4 +3216,5 @@ updateLeaderboardDisplay();
 setDealButton('Deal First Hand');
 addLog('Welcome to PS Poker — Professional Mode', 'system');
 addLog('$10/$20 No Limit Texas Hold\'em', 'system');
+setTimeout(()=>{ if(!G.namesSet) openNameModal(); }, 300);
 </script></body></html>

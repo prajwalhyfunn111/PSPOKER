@@ -2666,7 +2666,7 @@ function addBalanceLog(idx, delta, reason) {
 
 // Build pot breakdown (main + side pots) for display/logging
 function calcPotBreakdown() {
-    const contrib=G.players.map((p,i)=>({idx:i, amt:G.totalInvested[i], eligible: !p.folded})).filter(c=>c.amt>0);
+    const contrib=G.players.map((p,i)=>({idx:i, amt:G.totalInvested[i]})).filter(c=>c.amt>0);
     if (!contrib.length) return [];
     const pots=[];
     while (contrib.some(c=>c.amt>0)) {

@@ -1699,6 +1699,7 @@ let G= {
     handNum: 0,
     handHistory: [],
     log: [],
+    handStartStacks: [0,0,0,0],
     namesSet: false,
     // Analytics
     stats: {
@@ -1757,6 +1758,9 @@ function newHand() {
     if (G.phase!=='idle') return; // prevent double start clicks
     setDealButton('Dealing...', true);
     if (G.players.length===0) initPlayers();
+
+    // Record stacks at start of hand (before blinds) for reconciliation
+    G.handStartStacks=G.players.map(p=>p.stack);
 
     // Reset players who bust
     for (const p of G.players) {
@@ -2746,6 +2750,14 @@ function distributePot(showdown=false) {
         addLog(`Pot split evenly (${zeroWinners || 'no winners'})`, 'system');
     }
 
+    // Reconcile stacks to start-of-hand minus invested plus winnings (safety)
+    const investedSnapshot=[...G.totalInvested];
+    for (let i=0;i<G.players.length;i++) {
+        const start=G.handStartStacks[i]||G.players[i].stack;
+        const end=start - investedSnapshot[i] + gains[i];
+        G.players[i].stack=Math.max(0, end);
+    }
+
     G.pot=0;
     G.totalInvested=[0,0,0,0];
 }
@@ -2764,25 +2776,26 @@ function showBalanceHistory() {
     if (!player) return;
     const container=document.getElementById('msgArea');
     const entries=G.balanceHistory[idx]||[];
-    if (!entries.length) {
-        container.innerHTML=`Balance history: no transactions yet for ${player.name}.`;
-        return;
-    }
     const net=entries.reduce((a,e)=>a+e.delta,0);
+    const netLabel=`${net>=0?'+':'-'}$${Math.abs(net)}`;
+    const netColor=net>=0?'#4caf50':'#e74c3c';
+    const last=entries[0];
+    const lastText=last ? `${last.delta>=0?'+':'-'}$${Math.abs(last.delta)} (${last.reason})` : '—';
     container.innerHTML = `
-        <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text)">
-            <div style="color:var(--gold);margin-bottom:4px">Balance history (${player.name})</div>
-            <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:6px">
+        <div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--text);display:flex;flex-direction:column;gap:6px">
+            <div style="color:var(--gold);margin-bottom:2px">Balance summary (${player.name})</div>
+            <div style="display:flex;justify-content:space-between;gap:8px">
                 <span style="color:var(--text-dim)">Net change</span>
-                <span style="color:${net>=0?'#4caf50':'#e74c3c'}">${net>=0?'+':'-'}$${Math.abs(net)}</span>
+                <span style="color:${netColor}">${netLabel}</span>
             </div>
-            ${entries.map(e=>`
-                <div style="display:flex;justify-content:space-between;gap:8px">
-                    <span>Hand #${e.hand} ${e.phase}</span>
-                    <span style="color:${e.delta>=0?'#4caf50':'#e74c3c'}">${e.delta>=0?'+':'-'}$${Math.abs(e.delta)}</span>
-                    <span style="color:var(--text-dim)">${e.reason}</span>
-                </div>
-            `).join('')}
+            <div style="display:flex;justify-content:space-between;gap:8px">
+                <span style="color:var(--text-dim)">Current stack</span>
+                <span style="color:var(--text)">$${player.stack}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;gap:8px">
+                <span style="color:var(--text-dim)">Last result</span>
+                <span style="color:${last && last.delta>=0 ? '#4caf50' : '#e74c3c'}">${lastText}</span>
+            </div>
         </div>
     `;
 }

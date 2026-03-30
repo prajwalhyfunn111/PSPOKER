@@ -2716,7 +2716,11 @@ function distributePot(showdown=false) {
     }
 
     const gains=[0,0,0,0];
-    const pots=calcPotBreakdown();
+    let pots=calcPotBreakdown();
+    if (!pots.length && G.pot>0) {
+        const activeIdx=G.players.map((p,i)=>!p.folded?i:null).filter(i=>i!==null);
+        pots=[{amount:G.pot, elig:activeIdx}];
+    }
     for (const pot of pots) {
         if (pot.amount<=0 || pot.elig.length===0) continue;
         let best=null, winners=[];

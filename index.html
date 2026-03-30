@@ -1311,14 +1311,14 @@ const RANKS=['2',
 '7',
 '8',
 '9',
-'T',
+'10',
 'J',
 'Q',
 'K',
 'A'];
 
 const RANK_VAL= {
-    '2': 2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10, 'J':11, 'Q':12, 'K':13, 'A':14
+    '2': 2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'J':11, 'Q':12, 'K':13, 'A':14
 }
 
 ;
@@ -1533,7 +1533,7 @@ function handDesc(ev, holeCards, board) {
 
 function rankName(r) {
     const names= {
-        '2': '2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9', 'T':'10', 'J':'Jack', 'Q':'Queen', 'K':'King', 'A':'Ace'
+        '2': '2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9', '10':'10', 'J':'Jack', 'Q':'Queen', 'K':'King', 'A':'Ace'
     }
 
     ;
@@ -2696,69 +2696,68 @@ function distributePot(showdown=false) {
     if (active.length===0) return;
     if (G.pot<=0) { G.totalInvested=[0,0,0,0]; return; }
 
-    // No showdown: one player left
+    const gains=[0,0,0,0];
+
+    // No showdown case or only one player left active (others folded)
     if (!showdown || active.length===1) {
         const w=active[0];
         if (G.pot>0) {
-            w.stack+=G.pot;
+            gains[w.index]=G.pot;
             G.leaderboard[w.name]=(G.leaderboard[w.name]||0)+1;
             addLog(`${w.name} wins $${G.pot} (others folded)`, 'win');
             addBalanceLog(w.index, G.pot, 'Won pot (no showdown)');
         }
-        G.pot=0; G.totalInvested=[0,0,0,0];
-        return;
-    }
+    } else {
+        // Showdown: Ensure hand evals for all active players
+        for (const p of active) {
+            if (!p.handEval) p.handEval=evaluateHand([...p.hole, ...G.board]);
+        }
 
-    // Ensure hand evals
-    for (const p of active) {
-        if (!p.handEval) p.handEval=evaluateHand([...p.hole, ...G.board]);
-    }
-
-    const gains=[0,0,0,0];
-    let pots=calcPotBreakdown();
-    if (!pots.length && G.pot>0) {
-        const activeIdx=G.players.map((p,i)=>!p.folded?i:null).filter(i=>i!==null);
-        pots=[{amount:G.pot, elig:activeIdx}];
-    }
-    for (const pot of pots) {
-        if (pot.amount<=0 || pot.elig.length===0) continue;
-        const eligPlayers=pot.elig.map(i=>G.players[i]).filter(p=>p && !p.folded);
-        if (!eligPlayers.length) continue;
-        let bestScore=null, winners=[];
-        for (const pl of eligPlayers) {
-            const ev=pl.handEval || evaluateHand([...pl.hole, ...G.board]);
-            const score=[ev.rank, ev.tiebreak];
-            if (!bestScore || score[0]>bestScore[0] || (score[0]===bestScore[0] && score[1]>bestScore[1])) {
-                bestScore=score; winners=[pl];
-            } else if (score[0]===bestScore[0] && score[1]===bestScore[1]) {
-                winners.push(pl);
+        let pots=calcPotBreakdown();
+        if (!pots.length && G.pot>0) {
+            const activeIdx=active.map(p=>p.index);
+            pots=[{amount:G.pot, elig:activeIdx}];
+        }
+        for (const pot of pots) {
+            if (pot.amount<=0 || pot.elig.length===0) continue;
+            // Get relevant active players for this side pot by looking at their real index
+            const eligPlayers=active.filter(p=>pot.elig.includes(p.index));
+            if (!eligPlayers.length) continue;
+            let bestScore=null, winners=[];
+            for (const pl of eligPlayers) {
+                const ev=pl.handEval;
+                const score=[ev.rank, ev.tiebreak];
+                if (!bestScore || score[0]>bestScore[0] || (score[0]===bestScore[0] && score[1]>bestScore[1])) {
+                    bestScore=score; winners=[pl];
+                } else if (score[0]===bestScore[0] && score[1]===bestScore[1]) {
+                    winners.push(pl);
+                }
+            }
+            if (!winners.length) continue;
+            const share=Math.floor(pot.amount / winners.length);
+            let rem=pot.amount % winners.length;
+            for (const pl of winners) {
+                const extra=rem>0?1:0; rem=Math.max(0, rem-1);
+                const winAmt=share+extra;
+                gains[pl.index]+=winAmt;
+                addBalanceLog(pl.index, winAmt, 'Won pot');
+                G.leaderboard[pl.name]=(G.leaderboard[pl.name]||0)+1;
             }
         }
-        if (!winners.length) continue;
-        const share=Math.floor(pot.amount / winners.length);
-        let rem=pot.amount % winners.length;
-        for (const pl of winners) {
-            const extra=rem>0?1:0; rem=Math.max(0, rem-1);
-            const winAmt=share+extra;
-            pl.stack+=winAmt;
-            gains[pl.index]+=winAmt;
-            addBalanceLog(pl.index, winAmt, 'Won pot');
-            G.leaderboard[pl.name]=(G.leaderboard[pl.name]||0)+1;
+
+        const totalWon=winnersSummary(gains);
+        if (totalWon) addLog(totalWon, 'win');
+        else {
+            const zeroWinners=gains.map((g,i)=>({g,i})).filter(x=>x.g===0).map(x=>G.players[x.i].name).join(', ');
+            addLog(`Pot split evenly (${zeroWinners || 'no winners'})`, 'system');
         }
     }
 
-    const totalWon=winnersSummary(gains);
-    if (totalWon) addLog(totalWon, 'win');
-    else {
-        const zeroWinners=gains.map((g,i)=>({g,i})).filter(x=>x.g===0).map(x=>G.players[x.i].name).join(', ');
-        addLog(`Pot split evenly (${zeroWinners || 'no winners'})`, 'system');
-    }
-
-    // Reconcile stacks to start-of-hand minus invested plus winnings (safety)
+    // Reconcile stacks using start-of-hand stacks, total invested, and winnings (Safety)
     const investedSnapshot=[...G.totalInvested];
     for (let i=0;i<G.players.length;i++) {
         const start=G.handStartStacks[i]||G.players[i].stack;
-        const end=start - investedSnapshot[i] + gains[i];
+        const end=start - investedSnapshot[i] + (gains[i]||0);
         G.players[i].stack=Math.max(0, end);
     }
 

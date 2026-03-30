@@ -2707,6 +2707,7 @@ function distributePot(showdown=false) {
     }
 
     const gains=[0,0,0,0];
+    let heroGain=0;
     const contrib=G.players.map((p,i)=>({idx:i, amt:G.totalInvested[i], folded:p.folded})).filter(c=>c.amt>0);
     while (contrib.some(c=>c.amt>0)) {
         const elig=contrib.filter(c=>c.amt>0);
@@ -2731,8 +2732,10 @@ function distributePot(showdown=false) {
         for (const p of winners) {
             const extra=rem>0?1:0;
             rem=Math.max(0, rem-1);
-            gains[p.index]+=share+extra;
-            p.stack+=share+extra;
+            const winAmt=share+extra;
+            gains[p.index]+=winAmt;
+            p.stack+=winAmt;
+            if (p.isHero) heroGain+=winAmt;
             G.leaderboard[p.name]=(G.leaderboard[p.name]||0)+1;
         }
     }
@@ -2742,7 +2745,7 @@ function distributePot(showdown=false) {
     if (totalWon) addLog(totalWon, 'win');
     else addLog('Pot split with no net gain (all zero?)', 'system');
 
-    if (gains[0]>0) addBalanceLog(gains[0], 'Won pot');
+    if (heroGain>0) addBalanceLog(heroGain, 'Won pot');
 
     G.pot=0;
     G.totalInvested=[0,0,0,0];

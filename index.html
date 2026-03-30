@@ -1688,7 +1688,7 @@ let G= {
     nextFn: null,
     nextLabel: 'Next',
     totalInvested: [0,0,0,0],
-    balanceHistory: [],
+    balanceHistory: [[],[],[],[]],
     lastRaise: 20,
     currentBets: [0,
     0,
@@ -1795,8 +1795,8 @@ function newHand() {
     addContribution(bb, bbAmt);
     G.currentBets[sb]=sbAmt;
     G.currentBets[bb]=bbAmt;
-    if (sb===0) addBalanceLog(-sbAmt, 'Posted SB');
-    if (bb===0) addBalanceLog(-bbAmt, 'Posted BB');
+    addBalanceLog(sb, -sbAmt, 'Posted SB');
+    addBalanceLog(bb, -bbAmt, 'Posted BB');
 
     // Deal
     for (let i=0; i<2; i++) for (const p of G.players) p.hole.push(G.deck.pop());
@@ -1896,6 +1896,7 @@ function doAction(action, amount) {
         addContribution(0, amt);
         hero.lastAction='call';
         recomputeToCall();
+        addBalanceLog(0, -amt, 'Call');
 
         addLog(`You call $${amt} (to $${G.currentBets[0]})
 
@@ -1915,6 +1916,7 @@ function doAction(action, amount) {
             G.currentBets[0]=cap;
             hero.allIn=true;
             hero.lastAction='allin';
+            addBalanceLog(0, -added, 'All-in (under call)');
             G.currentPlayer=(0+1)%4;
             renderAll();
             updateHandRankDisplay();
@@ -2113,9 +2115,9 @@ function runAITurns() {
                     if (G.pauseMode) enqueueNext(next, `Next: ${nextName} acts`); else setTimeout(next, 900);
                     return;
                 }
-                const amt=Math.min(toCall, p.stack);
-                p.stack -=amt; p.bet +=amt; addContribution(G.currentPlayer, amt); G.currentBets[G.currentPlayer] +=amt;
-                p.lastAction='call';
+            const amt=Math.min(toCall, p.stack);
+            p.stack -=amt; p.bet +=amt; addContribution(G.currentPlayer, amt); G.currentBets[G.currentPlayer] +=amt;
+            p.lastAction='call'; addBalanceLog(G.currentPlayer, -amt, 'Call');
                 recomputeToCall();
 
                 addLog(`${p.name}
@@ -2134,7 +2136,7 @@ function runAITurns() {
                     // Not enough to raise — treated as a call/all-in for call amount
                     const amt=Math.min(toCall, p.stack);
                     p.stack -=amt; p.bet +=amt; addContribution(G.currentPlayer, amt); G.currentBets[G.currentPlayer] +=amt;
-                    p.lastAction='call';
+                    p.lastAction='call'; addBalanceLog(G.currentPlayer, -amt, 'Call');
                     recomputeToCall();
                     addLog(`${p.name}
 
@@ -2162,6 +2164,7 @@ function runAITurns() {
                     const total=Math.min(target, cap);
                     const added=total - G.currentBets[G.currentPlayer];
                     p.stack -=added; p.bet +=added; addContribution(G.currentPlayer, added); G.currentBets[G.currentPlayer]=total;
+                    addBalanceLog(G.currentPlayer, -added, p.lastAction==='allin'?'All-in':'Raise');
                     const prevToCall=G.toCall;
                     G.toCall=total;
                     if (total>prevToCall && (total - prevToCall)>=G.lastRaise) G.lastRaise=total - prevToCall;
@@ -2422,7 +2425,7 @@ function renderPlayers() {
             p.name
         }
 
-        </div><div class="player-stack ${p.isHero?'clickable-stack':''}" ${p.isHero?'onclick="showBalanceHistory()"':''}>$${
+        </div><div class="player-stack clickable-stack" onclick="showBalanceHistory(${i})">$${
             p.stack
         }
 
@@ -2643,17 +2646,18 @@ function renderHandCoach(ev, desc) {
 }
 
 // ============================================================
-// BALANCE HISTORY (HERO)
+// BALANCE HISTORY (all players)
 // ============================================================
-function addBalanceLog(delta, reason) {
-    G.balanceHistory.unshift({
+function addBalanceLog(idx, delta, reason) {
+    if (!G.balanceHistory[idx]) G.balanceHistory[idx]=[];
+    G.balanceHistory[idx].unshift({
         hand: G.handNum || 0,
         phase: G.phase,
         delta,
         reason,
         t: Date.now()
     });
-    if (G.balanceHistory.length>50) G.balanceHistory.pop();
+    if (G.balanceHistory[idx].length>50) G.balanceHistory[idx].pop();
 }
 
 // Build pot breakdown (main + side pots) for display/logging
@@ -2675,6 +2679,7 @@ function calcPotBreakdown() {
 function addContribution(idx, amt) {
     G.pot+=amt;
     G.totalInvested[idx]+=amt;
+    addBalanceLog(idx, -amt, 'Put in pot');
 }
 
 function recomputeToCall() {
@@ -2695,7 +2700,7 @@ function distributePot(showdown=false) {
             w.stack+=G.pot;
             G.leaderboard[w.name]=(G.leaderboard[w.name]||0)+1;
             addLog(`${w.name} wins $${G.pot} (others folded)`, 'win');
-            if (w.isHero) addBalanceLog(G.pot, 'Won pot (no showdown)');
+            addBalanceLog(w.index, G.pot, 'Won pot (no showdown)');
         }
         G.pot=0; G.totalInvested=[0,0,0,0];
         return;
@@ -2735,6 +2740,7 @@ function distributePot(showdown=false) {
             const winAmt=share+extra;
             gains[p.index]+=winAmt;
             p.stack+=winAmt;
+            addBalanceLog(p.index, winAmt, 'Won pot');
             if (p.isHero) heroGain+=winAmt;
             G.leaderboard[p.name]=(G.leaderboard[p.name]||0)+1;
         }
@@ -2745,7 +2751,7 @@ function distributePot(showdown=false) {
     if (totalWon) addLog(totalWon, 'win');
     else addLog('Pot split with no net gain (all zero?)', 'system');
 
-    if (heroGain>0) addBalanceLog(heroGain, 'Won pot');
+    if (heroGain>0) addBalanceLog(0, heroGain, 'Won pot');
 
     G.pot=0;
     G.totalInvested=[0,0,0,0];
@@ -2759,18 +2765,18 @@ function winnersSummary(gains) {
     return parts.length? parts.join(', ') : '';
 }
 
-function showBalanceHistory() {
-    const hero=G.players[0];
-    if (!hero) return;
+function showBalanceHistory(idx=0) {
+    const player=G.players[idx];
+    if (!player) return;
     const container=document.getElementById('msgArea');
-    const entries=G.balanceHistory;
+    const entries=G.balanceHistory[idx]||[];
     if (!entries.length) {
-        container.innerHTML='Balance history: no transactions yet.';
+        container.innerHTML=`Balance history: no transactions yet for ${player.name}.`;
         return;
     }
     container.innerHTML = `
         <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text)">
-            <div style="color:var(--gold);margin-bottom:4px">Balance history (latest first)</div>
+            <div style="color:var(--gold);margin-bottom:4px">Balance history (${player.name})</div>
             ${entries.map(e=>`
                 <div style="display:flex;justify-content:space-between;gap:8px">
                     <span>Hand #${e.hand} ${e.phase}</span>

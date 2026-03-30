@@ -1759,9 +1759,6 @@ function newHand() {
     setDealButton('Dealing...', true);
     if (G.players.length===0) initPlayers();
 
-    // Record stacks at start of hand (before blinds) for reconciliation
-    G.handStartStacks=G.players.map(p=>p.stack);
-
     // Reset players who bust
     for (const p of G.players) {
         if (p.stack <=0) p.stack=1000;
@@ -1771,6 +1768,9 @@ function newHand() {
         p.allIn=false;
         p.lastAction=null;
     }
+
+    // Record stacks at start of hand (before blinds) for reconciliation
+    G.handStartStacks=G.players.map(p=>p.stack);
 
     G.deck=shuffle(newDeck());
     G.board=[];
@@ -2683,7 +2683,6 @@ function calcPotBreakdown() {
 function addContribution(idx, amt) {
     G.pot+=amt;
     G.totalInvested[idx]+=amt;
-    addBalanceLog(idx, -amt, 'Put in pot');
 }
 
 function recomputeToCall() {
@@ -2723,14 +2722,15 @@ function distributePot(showdown=false) {
     }
     for (const pot of pots) {
         if (pot.amount<=0 || pot.elig.length===0) continue;
-        let best=null, winners=[];
-        for (const idx of pot.elig) {
-            const pl=G.players[idx];
-            if (!pl || pl.folded) continue;
+        const eligPlayers=pot.elig.map(i=>G.players[i]).filter(p=>p && !p.folded);
+        if (!eligPlayers.length) continue;
+        let bestScore=null, winners=[];
+        for (const pl of eligPlayers) {
             const ev=pl.handEval || evaluateHand([...pl.hole, ...G.board]);
-            if (!best || ev.rank>best.rank || (ev.rank===best.rank && ev.tiebreak>best.tiebreak)) {
-                best=ev; winners=[pl];
-            } else if (ev.rank===best.rank && ev.tiebreak===best.tiebreak) {
+            const score=[ev.rank, ev.tiebreak];
+            if (!bestScore || score[0]>bestScore[0] || (score[0]===bestScore[0] && score[1]>bestScore[1])) {
+                bestScore=score; winners=[pl];
+            } else if (score[0]===bestScore[0] && score[1]===bestScore[1]) {
                 winners.push(pl);
             }
         }

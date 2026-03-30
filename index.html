@@ -1299,7 +1299,24 @@ body {
   </div>
 </div>
 
- <div class="game-container" > <div class="table-area" > <div class="table-wrap" > <div class="table" id="mainTable" > <div class="table-inner" ></div> <div class="phase-badge" id="phaseBadge" >Waiting</div> <div class="next-overlay"><div class="next-control" id="nextControl"><button class="btn-action btn-call" onclick="runNext()">Next</button></div></div> <!-- Community Cards --> <div class="community-cards" id="communityCards" > <div class="community-card-slot" id="cc0" ></div> <div class="community-card-slot" id="cc1" ></div> <div class="community-card-slot" id="cc2" ></div> <div class="community-card-slot" id="cc3" ></div> <div class="community-card-slot" id="cc4" ></div> </div> <!-- Pot --> <div class="pot-area" id="potArea" > <div class="pot-label" >Pot</div> <div class="pot-amount" id="potDisplay" >$0</div> <div class="side-pot" id="sidePotDisplay" style="display:none"></div> <div class="pot-chips" id="potChips" ></div> </div> <!-- Players --> <div class="player-seat seat-0" id="seat0" ></div> <div class="player-seat seat-1" id="seat1" ></div> <div class="player-seat seat-2" id="seat2" ></div> <div class="player-seat seat-3" id="seat3" ></div> <!-- Winner overlay --> <div class="winner-overlay" id="winnerOverlay" > <div class="winner-box" > <div class="winner-title" id="winnerTitle" >🏆 You Win !</div> <div class="winner-hand" id="winnerHand" >Pair of Aces</div> <div class="winner-amount" id="winnerAmount" >+$320</div> </div> </div> </div> </div> <div class="msg-area" id="msgArea" ></div> <!-- Action Area --> <div class="action-area" id="actionArea" > <div class="hand-display" > <div class="hand-rank" id="handRankDisplay" >—</div> <div class="hand-desc" id="handDescDisplay" >Deal a hand to start</div> </div> <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end" > <div class="raise-section" > <span style="font-size:11px;color:var(--text-dim)" >Raise:</span> <input type="number" class="raise-input" id="raiseInput" value="40" min="20" step="10" > <div class="raise-preset" > <button class="btn-preset" onclick="setRaise('half')" >½P</button> <button class="btn-preset" onclick="setRaise('pot')" >Pot</button> <button class="btn-preset" onclick="setRaise('2x')" >2x</button> </div> </div> <div class="action-buttons" id="actionButtons" > <button class="btn-action btn-new-hand" onclick="newHand()" >Deal New Hand</button> </div> </div> <div class="hand-coach" id="handCoach"></div> </div> </div> <!-- SIDEBAR --> <div class="sidebar" > <div class="sidebar-tabs" > <button class="tab-btn active" onclick="switchTab('log')" id="tab-log" >Log</button> <button class="tab-btn" onclick="switchTab('analytics')" id="tab-analytics" >Stats</button> <button class="tab-btn" onclick="switchTab('hands')" id="tab-hands" >Hands</button> <button class="tab-btn" onclick="switchTab('leaders')" id="tab-leaders" >Leaders</button> </div> <div class="tab-content" id="tab-content-log" > <div id="logContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-analytics" > <div id="analyticsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-hands" > <div id="handsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-leaders" > <div id="leadersContainer" ></div> </div> </div> </div> <script> // ============================================================
+ <div class="game-container" > <div class="table-area" > <div class="table-wrap" > <div style="position:absolute;top:15px;right:15px;z-index:99;"><button class="btn-analytics" id="manualToggleBtn" onclick="toggleManualMode()" style="font-size:10px;padding:6px 12px;border-radius:20px;">Let me handle</button></div> <div class="table" id="mainTable" > <div class="table-inner" ></div> <div class="phase-badge" id="phaseBadge" >Waiting</div> <div class="next-overlay"><div class="next-control" id="nextControl"><button class="btn-action btn-call" onclick="runNext()">Next</button></div></div> <!-- Community Cards --> <div class="community-cards" id="communityCards" > <div class="community-card-slot" id="cc0" ></div> <div class="community-card-slot" id="cc1" ></div> <div class="community-card-slot" id="cc2" ></div> <div class="community-card-slot" id="cc3" ></div> <div class="community-card-slot" id="cc4" ></div> </div> <!-- Pot --> <div class="pot-area" id="potArea" > <div class="pot-label" >Pot</div> <div class="pot-amount" id="potDisplay" >$0</div> <div class="side-pot" id="sidePotDisplay" style="display:none"></div> <div class="pot-chips" id="potChips" ></div> </div> <!-- Players --> <div class="player-seat seat-0" id="seat0" ></div> <div class="player-seat seat-1" id="seat1" ></div> <div class="player-seat seat-2" id="seat2" ></div> <div class="player-seat seat-3" id="seat3" ></div> <!-- Winner overlay --> <div class="winner-overlay" id="winnerOverlay" > <div class="winner-box" > <div class="winner-title" id="winnerTitle" >🏆 You Win !</div> <div class="winner-hand" id="winnerHand" >Pair of Aces</div> <div class="winner-amount" id="winnerAmount" >+$320</div> </div> </div> </div> </div> <div class="msg-area" id="msgArea" ></div> <!-- Action Area --> <div class="action-area" id="actionArea" > <div class="hand-display" > <div class="hand-rank" id="handRankDisplay" >—</div> <div class="hand-desc" id="handDescDisplay" >Deal a hand to start</div> </div> <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end" > <div class="raise-section" > <span style="font-size:11px;color:var(--text-dim)" >Raise:</span> <input type="number" class="raise-input" id="raiseInput" value="40" min="20" step="10" > <div class="raise-preset" > <button class="btn-preset" onclick="setRaise('half')" >½P</button> <button class="btn-preset" onclick="setRaise('pot')" >Pot</button> <button class="btn-preset" onclick="setRaise('2x')" >2x</button> </div> </div> <div class="action-buttons" id="actionButtons" > <button class="btn-action btn-new-hand" onclick="newHand()" >Deal New Hand</button> </div> </div> <div class="hand-coach" id="handCoach"></div> </div> </div> <!-- SIDEBAR --> <div class="sidebar" > <div class="sidebar-tabs" > <button class="tab-btn active" onclick="switchTab('log')" id="tab-log" >Log</button> <button class="tab-btn" onclick="switchTab('analytics')" id="tab-analytics" >Stats</button> <button class="tab-btn" onclick="switchTab('hands')" id="tab-hands" >Hands</button> <button class="tab-btn" onclick="switchTab('leaders')" id="tab-leaders" >Leaders</button> </div> <div class="tab-content" id="tab-content-log" > <div id="logContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-analytics" > <div id="analyticsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-hands" > <div id="handsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-leaders" > <div id="leadersContainer" ></div> </div> </div> </div> <script> function toggleManualMode() {
+    G.manualMode = !G.manualMode;
+    const btn = document.getElementById('manualToggleBtn');
+    if (btn) {
+        btn.style.background = G.manualMode ? 'var(--gold)' : 'transparent';
+        btn.style.color = G.manualMode ? '#0a1510' : 'var(--gold)';
+        btn.textContent = G.manualMode ? 'Manual Mode: ON' : 'Let me handle';
+    }
+    renderAll();
+    if (G.currentPlayer !== -1 && G.currentPlayer !== 0) {
+        if (G.manualMode) {
+             renderActions();
+             showMsg(`${G.players[G.currentPlayer].name}'s turn`);
+        } else {
+             runAITurns();
+        }
+    }
+} // ============================================================
     // CARD ENGINE
     // ============================================================
     const SUITS=['♠', '♥', '♦', '♣'];
@@ -1695,6 +1712,7 @@ let G= {
     0,
     0],
     currentPlayer: -1,
+    manualMode: false,
     toCall: 0,
     handNum: 0,
     handHistory: [],
@@ -1856,72 +1874,70 @@ function newHand() {
 // PLAYER ACTIONS
 // ============================================================
 function doAction(action, amount) {
-    const hero=G.players[0];
-    if (hero.folded || hero.allIn) {
-        showMsg('You are out this hand. Press Next to continue.');
+    const p=G.players[G.currentPlayer];
+    if (!p) return;
+    if (p.folded || p.allIn) {
+        showMsg(`${p.name} is out this hand. Press Next to continue.`);
         renderActions();
         return;
     }
-    const toCall=G.toCall - G.currentBets[0];
+    const curIdx = G.currentPlayer;
+    const toCall=G.toCall - G.currentBets[curIdx];
     const minRaise=Math.max(G.lastRaise, 20);
 
     if (action==='fold') {
-        hero.folded=true;
-        hero.lastAction='fold';
-        addLog(`You fold`, 'fold');
-        renderActions(); // clear buttons immediately
+        p.folded=true;
+        p.lastAction='fold';
+        addLog(`${p.name} folds`, 'fold');
+        renderActions(); 
     }
 
     else if (action==='check') {
-        if (G.toCall>0) {
-            const owed=Math.max(0, G.toCall - G.currentBets[0]);
+        if (G.toCall > G.currentBets[curIdx]) {
+            const owed=Math.max(0, G.toCall - G.currentBets[curIdx]);
             showMsg(`Cannot check — $${owed} to call`);
             return;
         }
-        hero.lastAction='check';
-        addLog(`You check`, 'check');
+        p.lastAction='check';
+        addLog(`${p.name} checks`, 'check');
     }
 
     else if (action==='call') {
-        if (G.toCall<=0) {
-            // Nothing to call: treat as check
-            hero.lastAction='check';
-            addLog(`You check`, 'check');
+        if (G.toCall <= G.currentBets[curIdx]) {
+            p.lastAction='check';
+            addLog(`${p.name} checks`, 'check');
             renderAll();
             updateHandRankDisplay();
+            G.currentPlayer=(G.currentPlayer+1)%4;
             const lbl=`Next: ${nextActorName()} acts`;
             if (G.pauseMode) enqueueNext(runAITurns, lbl); else setTimeout(()=>runAITurns(), 1200);
             return;
         }
-        const amt=Math.min(toCall, hero.stack);
-        hero.stack -=amt;
-        hero.bet+=amt;
-        G.currentBets[0]+=amt;
-        addContribution(0, amt);
-        hero.lastAction='call';
+        const amt=Math.min(toCall, p.stack);
+        p.stack -=amt;
+        p.bet+=amt;
+        G.currentBets[curIdx]+=amt;
+        addContribution(curIdx, amt);
+        p.lastAction='call';
         recomputeToCall();
-        addBalanceLog(0, -amt, 'Call');
+        addBalanceLog(curIdx, -amt, 'Call');
 
-        addLog(`You call $${amt} (to $${G.currentBets[0]})
-
-            `, 'call');
-        G.stats.vpipHands+=(G.phase==='preflop' ?1:0);
-        if (G.phase==='preflop') G.stats.vpipHands=Math.min(G.stats.vpipHands, G.stats.handsPlayed);
+        addLog(`${p.name} calls $${amt} (to $${G.currentBets[curIdx]})`, 'call');
+        if (curIdx === 0 && G.phase==='preflop') G.stats.vpipHands++;
     }
 
     else if (action==='raise') {
-        const cap=hero.stack + G.currentBets[0];
+        const cap=p.stack + G.currentBets[curIdx];
         if (cap <= G.toCall) {
-            // Can only call/all-in for less than call
-            const added=Math.max(0, cap - G.currentBets[0]);
-            hero.stack -=added;
-            hero.bet+=added;
-            addContribution(0, added);
-            G.currentBets[0]=cap;
-            hero.allIn=true;
-            hero.lastAction='allin';
-            addBalanceLog(0, -added, 'All-in (under call)');
-            G.currentPlayer=(0+1)%4;
+            const added=Math.max(0, cap - G.currentBets[curIdx]);
+            p.stack -=added;
+            p.bet+=added;
+            addContribution(curIdx, added);
+            G.currentBets[curIdx]=cap;
+            p.allIn=true;
+            p.lastAction='allin';
+            addBalanceLog(curIdx, -added, 'All-in (under call)');
+            G.currentPlayer=(G.currentPlayer+1)%4;
             renderAll();
             updateHandRankDisplay();
             const lbl=`Next: ${nextActorName()} acts`;
@@ -1931,17 +1947,16 @@ function doAction(action, amount) {
 
         const required=G.toCall + minRaise;
         if (cap < required) {
-            // All-in below min raise; treat as call (no new raise)
-            const added=Math.max(0, cap - G.currentBets[0]);
-            hero.stack -=added;
-            hero.bet+=added;
-            addContribution(0, added);
-            G.currentBets[0]=cap;
-            hero.allIn=true;
-            hero.lastAction='allin';
+            const added=Math.max(0, cap - G.currentBets[curIdx]);
+            p.stack -=added;
+            p.bet+=added;
+            addContribution(curIdx, added);
+            G.currentBets[curIdx]=cap;
+            p.allIn=true;
+            p.lastAction='allin';
             G.toCall=Math.max(G.toCall, cap);
             recomputeToCall();
-            G.currentPlayer=(0+1)%4;
+            G.currentPlayer=(G.currentPlayer+1)%4;
             renderAll();
             updateHandRankDisplay();
             const lbl=`Next: ${nextActorName()} acts`;
@@ -1954,62 +1969,49 @@ function doAction(action, amount) {
             return;
         }
         const total=Math.min(amount, cap);
-        const added=total - G.currentBets[0];
-        hero.stack -=added;
-        hero.bet+=added;
-        addContribution(0, added);
-        G.currentBets[0]=total;
+        const added=total - G.currentBets[curIdx];
+        p.stack -=added;
+        p.bet+=added;
+        addContribution(curIdx, added);
+        G.currentBets[curIdx]=total;
         const prevToCall=G.toCall;
         G.toCall=total;
         if (total>prevToCall && (total - prevToCall)>=G.lastRaise) G.lastRaise=total - prevToCall;
-        hero.lastAction='raise';
+        p.lastAction='raise';
         recomputeToCall();
 
-        addLog(`You raise to $${
-                total
-            }
+        addLog(`${p.name} raises to $${total}`, 'raise');
 
-            `, 'raise');
-
-        if (G.phase==='preflop') {
+        if (curIdx === 0 && G.phase==='preflop') {
             G.stats.vpipHands++;
             G.stats.pfrHands++;
             G.stats.pfRaises++;
         }
-
-        G.stats.vpipHands=Math.min(G.stats.vpipHands, G.stats.handsPlayed);
-        G.stats.pfrHands=Math.min(G.stats.pfrHands, G.stats.handsPlayed);
     }
 
     else if (action==='allin') {
-        const amt=hero.stack;
-        addContribution(0, amt);
-        G.currentBets[0]+=amt;
-        hero.bet+=amt;
-        hero.stack=0;
-        hero.allIn=true;
-        if (G.currentBets[0] > G.toCall) {
-            G.lastRaise=Math.max(G.lastRaise, G.currentBets[0]-G.toCall);
-            G.toCall=G.currentBets[0];
+        const amt=p.stack;
+        addContribution(curIdx, amt);
+        G.currentBets[curIdx]+=amt;
+        p.bet+=amt;
+        p.stack=0;
+        p.allIn=true;
+        if (G.currentBets[curIdx] > G.toCall) {
+            G.lastRaise=Math.max(G.lastRaise, G.currentBets[curIdx]-G.toCall);
+            G.toCall=G.currentBets[curIdx];
         }
         recomputeToCall();
-        hero.lastAction='allin';
+        p.lastAction='allin';
 
-        addLog(`You go ALL-IN $${
-                G.currentBets[0]
-            }
-
-            `, 'raise');
+        addLog(`${p.name} goes ALL-IN $${G.currentBets[curIdx]}`, 'raise');
     }
 
-    G.currentPlayer=(0+1)%4;
+    G.currentPlayer=(G.currentPlayer+1)%4;
     renderAll();
     updateHandRankDisplay();
 
-    if (hero.folded) {
-        // Check if only 1 left
+    if (p.folded) {
         const active=G.players.filter(p=> !p.folded);
-
         if (active.length===1) {
             endHand(active[0]);
             return;
@@ -2036,26 +2038,10 @@ function runAITurns() {
             return;
         }
 
-        if (G.currentPlayer===0) {
-            const hero=G.players[0];
-            if (hero.folded || hero.allIn) {
-                // Skip hero if he cannot act
-                G.currentPlayer=nextPlayable(1);
-                if (G.currentPlayer===0) { // no playable opponents
-                    advancePhase();
-                    return;
-                }
-                next();
-                return;
-            }
-            renderActions();
-
-            showMsg(`Your turn — ${
-                    G.phase
-                }
-
-                `);
-            return;
+        if (G.currentPlayer===0 || G.manualMode) {
+             renderActions();
+             showMsg(`${G.players[G.currentPlayer].name}'s turn — ${G.phase}`);
+             return;
         }
 
         const p=G.players[G.currentPlayer];
@@ -2388,7 +2374,7 @@ function renderPlayers() {
         let cardsHTML='';
 
         if (p.hole.length) {
-            if (p.isHero && G.phase !=='idle') {
+            if ((p.isHero || G.manualMode) && G.phase !=='idle') {
                 cardsHTML=p.hole.map(c=>cardHTML(c)).join('');
             }
 
@@ -2501,11 +2487,12 @@ function renderPot() {
 }
 
 function renderActions() {
-    const hero=G.players[0];
-    if ( !hero || G.phase==='idle' || G.currentPlayer !==0) return;
+    const p=G.players[G.currentPlayer];
+    if ( !p || G.phase==='idle') return;
+    if (G.currentPlayer !== 0 && !G.manualMode) return;
     const btns=document.getElementById('actionButtons');
 
-    if (hero.folded || hero.allIn) {
+    if (p.folded || p.allIn) {
         if (btns) btns.innerHTML='';
         const ri=document.getElementById('raiseInput');
         if (ri) ri.disabled=true;
@@ -2513,8 +2500,9 @@ function renderActions() {
     }
     const ri=document.getElementById('raiseInput');
     if (ri) ri.disabled=false;
-    const toCall=Math.max(0, G.toCall - G.currentBets[0]);
-    const canCheck=G.toCall===0;
+    const curIdx = G.currentPlayer;
+    const toCall=Math.max(0, G.toCall - G.currentBets[curIdx]);
+    const canCheck=G.toCall <= G.currentBets[curIdx];
     const minRaiseAmount=Math.max(G.lastRaise, 20);
     const requiredTotal=G.toCall + minRaiseAmount;
     const minRaise=requiredTotal;
@@ -2524,25 +2512,17 @@ function renderActions() {
 
     btns.innerHTML=` <button class="btn-action btn-fold" onclick="doAction('fold')">Fold</button>${
         canCheck ? `<button class="btn-action btn-check" onclick="doAction('check')">Check</button>` : `<button class="btn-action btn-call" onclick="doAction('call')"${
-            toCall>=hero.stack?'disabled': ''
+            toCall>=p.stack?'disabled': ''
         }
-
-        >Call $${
-            Math.min(toCall, hero.stack)
-        }
-
-        </button>`
+>Call $${
+            Math.min(toCall, p.stack)
+        }</button>`
     }
-
     <button class="btn-action btn-raise" onclick="doRaise()"${
-        hero.stack<=toCall?'disabled': ''
-    }
-
-    >Raise</button><button class="btn-action btn-allin" onclick="doAction('allin')">All-In $${
-        hero.stack
-    }
-
-    </button>`;
+        p.stack<=toCall?'disabled': ''
+    }>Raise</button><button class="btn-action btn-allin" onclick="doAction('allin')">All-In $${
+        p.stack
+    }</button>`;
 }
 
 function doRaise() {
@@ -2552,14 +2532,15 @@ function doRaise() {
 
 function setRaise(type) {
     const pot=G.pot;
-    const toCall=G.toCall - G.currentBets[0];
-    const hero=G.players[0];
+    const p=G.players[G.currentPlayer];
+    if (!p) return;
+    const toCall=G.toCall - G.currentBets[G.currentPlayer];
     let amt;
     if (type==='half') amt=Math.round(pot/2/10)*10;
     else if (type==='pot') amt=pot+toCall*2;
     else if (type==='2x') amt=G.toCall*2;
     amt=Math.max(amt, G.toCall*2 || 20);
-    amt=Math.min(amt, hero?.stack||9999);
+    amt=Math.min(amt, p.stack);
     document.getElementById('raiseInput').value=amt;
 }
 
@@ -2567,9 +2548,10 @@ function setRaise(type) {
 // HAND RANK DISPLAY
 // ============================================================
 function updateHandRankDisplay() {
-    const hero=G.players[0];
+    const cur = (G.currentPlayer === -1 || G.players[G.currentPlayer].folded) ? 0 : G.currentPlayer;
+    const p = G.players[cur];
 
-    if ( !hero|| !hero.hole||hero.hole.length<2) {
+    if ( !p|| !p.hole||p.hole.length<2) {
         document.getElementById('handRankDisplay').textContent='—';
         document.getElementById('handDescDisplay').textContent='Deal a hand to start';
         renderHandCoach(null, null);
@@ -2577,10 +2559,9 @@ function updateHandRankDisplay() {
         return;
     }
 
-    const allCards=[...hero.hole,
-    ...G.board];
+    const allCards=[...p.hole, ...G.board];
     const ev=evaluateHand(allCards);
-    const desc=handDesc(ev, hero.hole, G.board);
+    const desc=handDesc(ev, p.hole, G.board);
 
     document.getElementById('handRankDisplay').textContent=ev.name;
     document.getElementById('handDescDisplay').textContent=desc;
@@ -2588,18 +2569,9 @@ function updateHandRankDisplay() {
 
     // Outs
     if (G.board.length >=3 && G.board.length < 5 && ev.rank < 300) {
-        const outsInfo=calculateOuts(hero.hole, G.board);
-
+        const outsInfo=calculateOuts(p.hole, G.board);
         if (outsInfo && outsInfo.outs > 0) {
-            document.getElementById('handDescDisplay').textContent=`${
-                desc
-            }
-
-            — ${
-                outsInfo.outs
-            }
-
-            outs`;
+            document.getElementById('handDescDisplay').textContent=`${desc} — ${outsInfo.outs} outs`;
         }
     }
 
@@ -2809,15 +2781,18 @@ function showBalanceHistory() {
 function updateLeaderboardDisplay() {
     const container=document.getElementById('leadersContainer');
     if (!container) return;
-    const entries=Object.entries(G.leaderboard||{}).map(([name, wins])=>({name, wins}));
-    entries.sort((a, b)=>b.wins-a.wins || a.name.localeCompare(b.name));
+    const entries=Object.entries(G.leaderboard||{}).map(([name, wins])=>{
+        const player=G.players.find(p=>p.name===name);
+        return {name, wins, stack: player ? player.stack : 0};
+    });
+    entries.sort((a, b)=>b.wins-a.wins || b.stack-a.stack || a.name.localeCompare(b.name));
     const total=entries.reduce((a, e)=>a+e.wins, 0) || 1;
     container.innerHTML=`
         <div class="stat-section-title">Leaderboard</div>
         <div style="display:flex;flex-direction:column;gap:6px">
             ${entries.map((e, idx)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid rgba(201,168,76,0.1);border-radius:6px;background:rgba(10,20,14,0.7)">
                 <span style="color:${idx===0?'var(--gold)': 'var(--text)'};font-weight:600">${idx+1}. ${e.name}</span>
-                <span style="font-family:'DM Mono',monospace;color:var(--gold-light)">${e.wins} wins • ${Math.round(e.wins/total*100)}%</span>
+                <span style="font-family:'DM Mono',monospace;color:var(--gold-light)">${e.wins} wins ($${e.stack}) • ${Math.round(e.wins/total*100)}%</span>
             </div>`).join('')}
         </div>`;
 }
@@ -3198,19 +3173,19 @@ function setDealButton(label='Deal Next Hand', disabled=false) {
 }
 
 function updateDealButtonAfterHand() {
-    if (G.handNum>=5) {
+    if (G.handNum>=10) {
         resetTableScores();
-        setDealButton('Deal First Hand');
-        showMsg('5-hand set complete — stacks reset to $1000. Deal First Hand to start again.');
+        setDealButton('Deal New Set');
+        showMsg('10-hand set complete — leaderboard & scores reset. Deal First Hand of new set.');
         return;
     }
     const nextRound=G.handNum+1;
-    setDealButton(`Start Round ${nextRound} (of 5)`);
+    setDealButton(`Start Round ${nextRound} (of 10)`);
     showMsg(`Round ${G.handNum} complete. Click to start round ${nextRound}.`);
 }
 
 function resetTableScores() {
-    // Reset stacks and bets after a 5-hand block
+    // Reset stacks and bets after a 10-hand block
     for (const p of G.players) {
         p.stack=1000;
         p.bet=0;
@@ -3237,7 +3212,7 @@ function resetTableScores() {
     if (wrap) wrap.style.display='none';
     const inline=document.getElementById('nextInlineBtn');
     if (inline) inline.style.display='none';
-    addLog('Session reset: stacks set to $1000 after 5 hands', 'system');
+    addLog('Session reset: stacks set to $1000 after 10 hands', 'system');
     renderAll();
     updateLeaderboardDisplay();
     updateHeaderStats();
@@ -3303,4 +3278,10 @@ setDealButton('Deal First Hand');
 addLog('Welcome to PS Poker — Professional Mode', 'system');
 addLog('$10/$20 No Limit Texas Hold\'em', 'system');
 setTimeout(()=>{ if(!G.namesSet) openNameModal(); }, 300);
+window.addEventListener('keydown', (e)=>{
+    if (e.key==='Enter' && G.nextFn) {
+        e.preventDefault();
+        runNext();
+    }
+});
 </script></body></html>

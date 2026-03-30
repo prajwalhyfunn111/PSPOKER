@@ -2125,7 +2125,7 @@ function runAITurns() {
                     calls $${amt} (to $${G.currentBets[G.currentPlayer]})
 
                     `, 'call');
-                if (p.isHero && amt>0) addBalanceLog(-amt, `Call ${G.phase}`);
+                if (p.isHero && amt>0) addBalanceLog(0, -amt, `Call ${G.phase}`);
             }
 
             else if (result.action==='raise') {
@@ -2425,7 +2425,7 @@ function renderPlayers() {
             p.name
         }
 
-        </div><div class="player-stack clickable-stack" onclick="showBalanceHistory(${i})">$${
+        </div><div class="player-stack ${p.isHero?'clickable-stack':''}" ${p.isHero?`onclick="showBalanceHistory()"`:''}>$${
             p.stack
         }
 
@@ -2712,46 +2712,36 @@ function distributePot(showdown=false) {
     }
 
     const gains=[0,0,0,0];
-    let heroGain=0;
-    const contrib=G.players.map((p,i)=>({idx:i, amt:G.totalInvested[i], folded:p.folded})).filter(c=>c.amt>0);
-    while (contrib.some(c=>c.amt>0)) {
-        const elig=contrib.filter(c=>c.amt>0);
-        const minAmt=Math.min(...elig.map(c=>c.amt));
-        const potAmt=minAmt * elig.length;
-        for (const c of elig) c.amt-=minAmt;
-
-        // Determine best hand among eligible
-        let best=null; let winners=[];
-        for (const c of elig) {
-            if (G.players[c.idx].folded) continue;
-            const p=G.players[c.idx];
-            const ev=p.handEval || evaluateHand([...p.hole, ...G.board]);
+    const pots=calcPotBreakdown();
+    for (const pot of pots) {
+        if (pot.amount<=0 || pot.elig.length===0) continue;
+        let best=null, winners=[];
+        for (const idx of pot.elig) {
+            const pl=G.players[idx];
+            if (!pl || pl.folded) continue;
+            const ev=pl.handEval || evaluateHand([...pl.hole, ...G.board]);
             if (!best || ev.rank>best.rank || (ev.rank===best.rank && ev.tiebreak>best.tiebreak)) {
-                best=ev; winners=[p];
+                best=ev; winners=[pl];
             } else if (ev.rank===best.rank && ev.tiebreak===best.tiebreak) {
-                winners.push(p);
+                winners.push(pl);
             }
         }
-        const share=Math.floor(potAmt/winners.length);
-        let rem=potAmt%winners.length;
-        for (const p of winners) {
-            const extra=rem>0?1:0;
-            rem=Math.max(0, rem-1);
+        if (!winners.length) continue;
+        const share=Math.floor(pot.amount / winners.length);
+        let rem=pot.amount % winners.length;
+        for (const pl of winners) {
+            const extra=rem>0?1:0; rem=Math.max(0, rem-1);
             const winAmt=share+extra;
-            gains[p.index]+=winAmt;
-            p.stack+=winAmt;
-            addBalanceLog(p.index, winAmt, 'Won pot');
-            if (p.isHero) heroGain+=winAmt;
-            G.leaderboard[p.name]=(G.leaderboard[p.name]||0)+1;
+            pl.stack+=winAmt;
+            gains[pl.index]+=winAmt;
+            addBalanceLog(pl.index, winAmt, 'Won pot');
+            G.leaderboard[pl.name]=(G.leaderboard[pl.name]||0)+1;
         }
     }
 
-    // Log winners
     const totalWon=winnersSummary(gains);
     if (totalWon) addLog(totalWon, 'win');
     else addLog('Pot split with no net gain (all zero?)', 'system');
-
-    if (heroGain>0) addBalanceLog(0, heroGain, 'Won pot');
 
     G.pot=0;
     G.totalInvested=[0,0,0,0];
@@ -2765,7 +2755,8 @@ function winnersSummary(gains) {
     return parts.length? parts.join(', ') : '';
 }
 
-function showBalanceHistory(idx=0) {
+function showBalanceHistory() {
+    const idx=0; // hero only
     const player=G.players[idx];
     if (!player) return;
     const container=document.getElementById('msgArea');
@@ -2774,9 +2765,14 @@ function showBalanceHistory(idx=0) {
         container.innerHTML=`Balance history: no transactions yet for ${player.name}.`;
         return;
     }
+    const net=entries.reduce((a,e)=>a+e.delta,0);
     container.innerHTML = `
         <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text)">
             <div style="color:var(--gold);margin-bottom:4px">Balance history (${player.name})</div>
+            <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:6px">
+                <span style="color:var(--text-dim)">Net change</span>
+                <span style="color:${net>=0?'#4caf50':'#e74c3c'}">${net>=0?'+':'-'}$${Math.abs(net)}</span>
+            </div>
             ${entries.map(e=>`
                 <div style="display:flex;justify-content:space-between;gap:8px">
                     <span>Hand #${e.hand} ${e.phase}</span>

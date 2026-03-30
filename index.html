@@ -220,6 +220,7 @@ body {
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 6px 10px;
+    min-width: 120px;
 }
 
 .pot-label {
@@ -235,6 +236,13 @@ body {
     font-size: 18px;
     color: var(--gold);
     font-weight: 700;
+}
+
+.side-pot {
+    margin-top: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
 }
 
 .pot-chips {
@@ -1291,7 +1299,7 @@ body {
   </div>
 </div>
 
- <div class="game-container" > <div class="table-area" > <div class="table-wrap" > <div class="table" id="mainTable" > <div class="table-inner" ></div> <div class="phase-badge" id="phaseBadge" >Waiting</div> <div class="next-overlay"><div class="next-control" id="nextControl"><button class="btn-action btn-call" onclick="runNext()">Next</button></div></div> <!-- Community Cards --> <div class="community-cards" id="communityCards" > <div class="community-card-slot" id="cc0" ></div> <div class="community-card-slot" id="cc1" ></div> <div class="community-card-slot" id="cc2" ></div> <div class="community-card-slot" id="cc3" ></div> <div class="community-card-slot" id="cc4" ></div> </div> <!-- Pot --> <div class="pot-area" id="potArea" > <div class="pot-label" >Pot</div> <div class="pot-amount" id="potDisplay" >$0</div> <div class="pot-chips" id="potChips" ></div> </div> <!-- Players --> <div class="player-seat seat-0" id="seat0" ></div> <div class="player-seat seat-1" id="seat1" ></div> <div class="player-seat seat-2" id="seat2" ></div> <div class="player-seat seat-3" id="seat3" ></div> <!-- Winner overlay --> <div class="winner-overlay" id="winnerOverlay" > <div class="winner-box" > <div class="winner-title" id="winnerTitle" >🏆 You Win !</div> <div class="winner-hand" id="winnerHand" >Pair of Aces</div> <div class="winner-amount" id="winnerAmount" >+$320</div> </div> </div> </div> </div> <div class="msg-area" id="msgArea" ></div> <!-- Action Area --> <div class="action-area" id="actionArea" > <div class="hand-display" > <div class="hand-rank" id="handRankDisplay" >—</div> <div class="hand-desc" id="handDescDisplay" >Deal a hand to start</div> </div> <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end" > <div class="raise-section" > <span style="font-size:11px;color:var(--text-dim)" >Raise:</span> <input type="number" class="raise-input" id="raiseInput" value="40" min="20" step="10" > <div class="raise-preset" > <button class="btn-preset" onclick="setRaise('half')" >½P</button> <button class="btn-preset" onclick="setRaise('pot')" >Pot</button> <button class="btn-preset" onclick="setRaise('2x')" >2x</button> </div> </div> <div class="action-buttons" id="actionButtons" > <button class="btn-action btn-new-hand" onclick="newHand()" >Deal New Hand</button> </div> </div> <div class="hand-coach" id="handCoach"></div> </div> </div> <!-- SIDEBAR --> <div class="sidebar" > <div class="sidebar-tabs" > <button class="tab-btn active" onclick="switchTab('log')" id="tab-log" >Log</button> <button class="tab-btn" onclick="switchTab('analytics')" id="tab-analytics" >Stats</button> <button class="tab-btn" onclick="switchTab('hands')" id="tab-hands" >Hands</button> <button class="tab-btn" onclick="switchTab('leaders')" id="tab-leaders" >Leaders</button> </div> <div class="tab-content" id="tab-content-log" > <div id="logContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-analytics" > <div id="analyticsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-hands" > <div id="handsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-leaders" > <div id="leadersContainer" ></div> </div> </div> </div> <script> // ============================================================
+ <div class="game-container" > <div class="table-area" > <div class="table-wrap" > <div class="table" id="mainTable" > <div class="table-inner" ></div> <div class="phase-badge" id="phaseBadge" >Waiting</div> <div class="next-overlay"><div class="next-control" id="nextControl"><button class="btn-action btn-call" onclick="runNext()">Next</button></div></div> <!-- Community Cards --> <div class="community-cards" id="communityCards" > <div class="community-card-slot" id="cc0" ></div> <div class="community-card-slot" id="cc1" ></div> <div class="community-card-slot" id="cc2" ></div> <div class="community-card-slot" id="cc3" ></div> <div class="community-card-slot" id="cc4" ></div> </div> <!-- Pot --> <div class="pot-area" id="potArea" > <div class="pot-label" >Pot</div> <div class="pot-amount" id="potDisplay" >$0</div> <div class="side-pot" id="sidePotDisplay" style="display:none"></div> <div class="pot-chips" id="potChips" ></div> </div> <!-- Players --> <div class="player-seat seat-0" id="seat0" ></div> <div class="player-seat seat-1" id="seat1" ></div> <div class="player-seat seat-2" id="seat2" ></div> <div class="player-seat seat-3" id="seat3" ></div> <!-- Winner overlay --> <div class="winner-overlay" id="winnerOverlay" > <div class="winner-box" > <div class="winner-title" id="winnerTitle" >🏆 You Win !</div> <div class="winner-hand" id="winnerHand" >Pair of Aces</div> <div class="winner-amount" id="winnerAmount" >+$320</div> </div> </div> </div> </div> <div class="msg-area" id="msgArea" ></div> <!-- Action Area --> <div class="action-area" id="actionArea" > <div class="hand-display" > <div class="hand-rank" id="handRankDisplay" >—</div> <div class="hand-desc" id="handDescDisplay" >Deal a hand to start</div> </div> <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end" > <div class="raise-section" > <span style="font-size:11px;color:var(--text-dim)" >Raise:</span> <input type="number" class="raise-input" id="raiseInput" value="40" min="20" step="10" > <div class="raise-preset" > <button class="btn-preset" onclick="setRaise('half')" >½P</button> <button class="btn-preset" onclick="setRaise('pot')" >Pot</button> <button class="btn-preset" onclick="setRaise('2x')" >2x</button> </div> </div> <div class="action-buttons" id="actionButtons" > <button class="btn-action btn-new-hand" onclick="newHand()" >Deal New Hand</button> </div> </div> <div class="hand-coach" id="handCoach"></div> </div> </div> <!-- SIDEBAR --> <div class="sidebar" > <div class="sidebar-tabs" > <button class="tab-btn active" onclick="switchTab('log')" id="tab-log" >Log</button> <button class="tab-btn" onclick="switchTab('analytics')" id="tab-analytics" >Stats</button> <button class="tab-btn" onclick="switchTab('hands')" id="tab-hands" >Hands</button> <button class="tab-btn" onclick="switchTab('leaders')" id="tab-leaders" >Leaders</button> </div> <div class="tab-content" id="tab-content-log" > <div id="logContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-analytics" > <div id="analyticsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-hands" > <div id="handsContainer" ></div> </div> <div class="tab-content" style="display:none" id="tab-content-leaders" > <div id="leadersContainer" ></div> </div> </div> </div> <script> // ============================================================
     // CARD ENGINE
     // ============================================================
     const SUITS=['♠', '♥', '♦', '♣'];
@@ -2053,10 +2061,7 @@ function runAITurns() {
         }
 
         // Check if betting round done
-        if (isBettingRoundDone()) {
-            advancePhase();
-            return;
-        }
+            if (isBettingRoundDone()) { scheduleAdvance('Next: Next street'); return; }
 
         showThinking(p.name);
 
@@ -2182,9 +2187,7 @@ function runAITurns() {
             renderAll();
             updateHandRankDisplay();
 
-            if (isBettingRoundDone()) {
-                if (G.pauseMode) enqueueNext(advancePhase, 'Next: Next street'); else setTimeout(advancePhase, 900); return;
-            }
+            if (isBettingRoundDone()) { scheduleAdvance('Next: Next street'); return; }
 
             const nextName=nextActorName();
             if (G.pauseMode) enqueueNext(next, `Next: ${nextName} acts`); else setTimeout(next, 900);
@@ -2461,6 +2464,18 @@ function renderPot() {
     }
 
     `;
+    const sideEl=document.getElementById('sidePotDisplay');
+    if (sideEl) {
+        const pots=calcPotBreakdown();
+        if (pots.length>1) {
+            const side=pots.slice(1).map((p,i)=>`Side ${i+1}: $${p.amount}`).join(' · ');
+            sideEl.textContent=side;
+            sideEl.style.display='block';
+        } else {
+            sideEl.textContent='';
+            sideEl.style.display='none';
+        }
+    }
     // Chips visual
     const chips=document.getElementById('potChips');
     chips.innerHTML='';
@@ -2641,6 +2656,22 @@ function addBalanceLog(delta, reason) {
     if (G.balanceHistory.length>50) G.balanceHistory.pop();
 }
 
+// Build pot breakdown (main + side pots) for display/logging
+function calcPotBreakdown() {
+    const contrib=G.players.map((p,i)=>({idx:i, amt:G.totalInvested[i], eligible: !p.folded})).filter(c=>c.amt>0);
+    if (!contrib.length) return [];
+    const pots=[];
+    while (contrib.some(c=>c.amt>0)) {
+        const tier=contrib.filter(c=>c.amt>0);
+        const minAmt=Math.min(...tier.map(c=>c.amt));
+        const potAmt=minAmt * tier.length;
+        for (const c of tier) c.amt-=minAmt;
+        const elig=tier.filter(c=>G.players[c.idx] && !G.players[c.idx].folded).map(c=>c.idx);
+        pots.push({amount:potAmt, elig});
+    }
+    return pots;
+}
+
 function addContribution(idx, amt) {
     G.pot+=amt;
     G.totalInvested[idx]+=amt;
@@ -2676,7 +2707,7 @@ function distributePot(showdown=false) {
     }
 
     const gains=[0,0,0,0];
-    const contrib=active.map(p=>({idx:p.index, amt:G.totalInvested[p.index]})).filter(c=>c.amt>0);
+    const contrib=G.players.map((p,i)=>({idx:i, amt:G.totalInvested[i], folded:p.folded})).filter(c=>c.amt>0);
     while (contrib.some(c=>c.amt>0)) {
         const elig=contrib.filter(c=>c.amt>0);
         const minAmt=Math.min(...elig.map(c=>c.amt));
@@ -2686,6 +2717,7 @@ function distributePot(showdown=false) {
         // Determine best hand among eligible
         let best=null; let winners=[];
         for (const c of elig) {
+            if (G.players[c.idx].folded) continue;
             const p=G.players[c.idx];
             const ev=p.handEval || evaluateHand([...p.hole, ...G.board]);
             if (!best || ev.rank>best.rank || (ev.rank===best.rank && ev.tiebreak>best.tiebreak)) {
@@ -2788,6 +2820,17 @@ function nextPlayable(startIdx) {
         idx=(idx+1)%4;
     }
     return startIdx; // fallback
+}
+
+// When betting is done, either queue Next (step mode) or auto-advance,
+// with a small safety timeout so the game never gets stuck.
+function scheduleAdvance(label='Next: Next street') {
+    if (G.pauseMode) {
+        enqueueNext(advancePhase, label);
+        setTimeout(()=>{ if (G.nextFn===advancePhase) { G.nextFn=null; G.nextLabel='Next'; advancePhase(); } }, 4000);
+    } else {
+        setTimeout(advancePhase, 900);
+    }
 }
 
 function openNameModal() {

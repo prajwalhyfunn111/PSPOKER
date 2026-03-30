@@ -2741,7 +2741,10 @@ function distributePot(showdown=false) {
 
     const totalWon=winnersSummary(gains);
     if (totalWon) addLog(totalWon, 'win');
-    else addLog('Pot split with no net gain (all zero?)', 'system');
+    else {
+        const zeroWinners=gains.map((g,i)=>({g,i})).filter(x=>x.g===0).map(x=>G.players[x.i].name).join(', ');
+        addLog(`Pot split evenly (${zeroWinners || 'no winners'})`, 'system');
+    }
 
     G.pot=0;
     G.totalInvested=[0,0,0,0];
